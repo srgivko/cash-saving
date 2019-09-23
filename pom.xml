@@ -87,6 +87,12 @@
             <artifactId>postgresql</artifactId>
             <version>9.1-901-1.jdbc4</version>
         </dependency>
+        <!--Liquibase-->
+        <dependency>
+            <groupId>org.liquibase</groupId>
+            <artifactId>liquibase-core</artifactId>
+            <version>3.8.0</version>
+        </dependency>
 
         <dependency>
             <groupId>org.projectlombok</groupId>
@@ -101,11 +107,11 @@
             <artifactId>jcl-over-slf4j</artifactId>
             <version>1.7.12</version>
         </dependency>
-        <!--<dependency>-->
-            <!--<groupId>org.slf4j</groupId>-->
-            <!--<artifactId>log4j-over-slf4j</artifactId>-->
-            <!--<version>1.7.12</version>-->
-        <!--</dependency>-->
+        <dependency>
+            <groupId>org.slf4j</groupId>
+            <artifactId>log4j-over-slf4j</artifactId>
+            <version>1.7.12</version>
+        </dependency>
         <dependency>
             <groupId>org.codehaus.janino</groupId>
             <artifactId>janino</artifactId>
