@@ -14,6 +14,7 @@
         <maven.compiler.target>1.8</maven.compiler.target>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <spring.version>5.1.9.RELEASE</spring.version>
+        <spring.security.version>5.1.6.RELEASE</spring.security.version>
         <jstl.version>1.2</jstl.version>
         <javax.servlet.api.version>4.0.1</javax.servlet.api.version>
         <hibernate.core.version>5.4.2.Final</hibernate.core.version>
@@ -42,6 +43,18 @@
             <groupId>org.springframework</groupId>
             <artifactId>spring-webmvc</artifactId>
             <version>${spring.version}</version>
+        </dependency>
+
+        <!--Spring security-->
+        <dependency>
+            <groupId>org.springframework.security</groupId>
+            <artifactId>spring-security-web</artifactId>
+            <version>${spring.security.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.springframework.security</groupId>
+            <artifactId>spring-security-config</artifactId>
+            <version>${spring.security.version}</version>
         </dependency>
 
         <!--Servlet api and jstl-->
