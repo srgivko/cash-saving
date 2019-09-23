@@ -1,5 +1,6 @@
 package by.sivko.cashsaving.configs;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -21,8 +22,12 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
     @Value("${security.enable-csrf}")
     private boolean csrfEnabled;
 
-    // TODO: 9/23/19 Autowired userDetailsService for security
-    private UserDetailsService userDetailsService = null;
+    private final UserDetailsService userDetailsService;
+
+    @Autowired
+    public WebSecurityConfig(UserDetailsService userDetailsService) {
+        this.userDetailsService = userDetailsService;
+    }
 
     @Override
     protected void configure(AuthenticationManagerBuilder auth) {
