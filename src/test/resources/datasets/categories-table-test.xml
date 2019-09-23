@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<dataset>
+    <categories id="100000" name="name-100000" description="description-100000" capacity="100000" createAt="[create_timestamp]" user_id="100000"/>
+    <categories id="100001" name="name-100001" description="description-100001" capacity="100001" createAt="[create_timestamp]" user_id="100000"/>
+    <categories id="100002" name="name-100002" description="description-100002" capacity="100002" createAt="[create_timestamp]" user_id="100000"/>
+    <categories id="100003" name="name-100003" description="description-100003" capacity="100003" createAt="[create_timestamp]" user_id="100000"/>
+    <categories id="100004" name="name-100004" description="description-100004" capacity="100004" createAt="[create_timestamp]" user_id="100000"/>
+    <categories id="100005" name="name-100005" description="description-100005" capacity="100005" createAt="[create_timestamp]" user_id="100000"/>
+</dataset>

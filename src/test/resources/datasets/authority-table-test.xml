@@ -1,0 +1,4 @@
+<dataset>
+    <authorities id="1" name="ROLE_ADMIN"/>
+    <authorities id="2" name="ROLE_USER"/>
+</dataset>

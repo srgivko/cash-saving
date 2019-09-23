@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<dataset>
+    <events id="1000000" type="INCOME" description="1000000"  amount="1000000" createAt="[create_timestamp]" category_id="100000"/>
+    <events id="1000001" type="OUTCOME" description="1000001"  amount="1000001" createAt="[create_timestamp]" category_id="100001"/>
+    <events id="1000002" type="INCOME" description="1000002"  amount="1000002" createAt="[create_timestamp]" category_id="100000"/>
+    <events id="1000003" type="INCOME" description="1000003"  amount="1000003" createAt="[create_timestamp]" category_id="100001"/>
+    <events id="1000004" type="OUTCOME" description="1000004"  amount="10000004" createAt="[create_timestamp]" category_id="100002"/>
+    <events id="1000005" type="INCOME" description="1000005"  amount="1000005" createAt="[create_timestamp]" category_id="100002"/>
+    <events id="1000006" type="OUTCOME" description="1000006"  amount="10000006" createAt="[create_timestamp]" category_id="100000"/>
+</dataset>

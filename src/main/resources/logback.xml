@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<configuration>
+
+    <!--<appender name="STDOUT" class="ch.qos.logback.core.ConsoleAppender">-->
+    <!--<encoder class="ch.qos.logback.core.encoder.LayoutWrappingEncoder">-->
+    <!--<layout class="ch.qos.logback.classic.PatternLayout">-->
+    <!--<Pattern>-->
+    <!--%d{yyyy-MM-dd HH:mm:ss} %-5level %logger{36} - %msg%n-->
+    <!--</Pattern>-->
+    <!--</layout>-->
+    <!--</encoder>-->
+    <!--</appender>-->
+
+    <appender name="COLOR" class="ch.qos.logback.core.ConsoleAppender">
+        <encoder>
+            <pattern>[%date] %highlight([%level]) [%logger{10} %file:%line] %msg%n</pattern>
+        </encoder>
+    </appender>
+
+    <appender name="NOCOLOR" class="ch.qos.logback.core.ConsoleAppender">
+        <encoder>
+            <pattern>[%date] [%level] [%logger{10} %file:%line] %msg%n</pattern>
+        </encoder>
+    </appender>
+
+    <logger name="org.springframework" level="INFO" additivity="false">
+    <appender-ref ref="COLOR"/>
+    </logger>
+
+    <logger name="by.sivko.cashsavings" level="debug" additivity="false">
+    <appender-ref ref="COLOR"/>
+    </logger>
+
+    <root level="info">
+        <appender-ref ref="COLOR"/>
+        <!-- to use enable this mode pass -Dcolor to jvm -->
+        <!--<if condition='isDefined("color")'>-->
+            <!--<then>-->
+                <!--<appender-ref ref="COLOR"/>-->
+            <!--</then>-->
+            <!--<else>-->
+                <!--<appender-ref ref="NOCOLOR"/>-->
+            <!--</else>-->
+        <!--</if>-->
+    </root>
+
+</configuration>
