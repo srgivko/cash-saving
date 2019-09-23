@@ -6,6 +6,7 @@ import by.sivko.cashsaving.models.Authority;
 import by.sivko.cashsaving.models.AuthorityType;
 import by.sivko.cashsaving.models.User;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import javax.transaction.Transactional;
@@ -21,14 +22,18 @@ public class UserServiceImpl implements UserService {
 
     private final AuthorityDao authorityDao;
 
+    private final PasswordEncoder passwordEncoder;
+
     @Autowired
-    public UserServiceImpl(UserDao userDao, AuthorityDao authorityDao) {
+    public UserServiceImpl(UserDao userDao, AuthorityDao authorityDao, PasswordEncoder passwordEncoder) {
         this.userDao = userDao;
         this.authorityDao = authorityDao;
+        this.passwordEncoder = passwordEncoder;
     }
 
     @Override
     public User addUser(User user) {
+        user.setPassword(this.passwordEncoder.encode(user.getPassword()));
         Authority authority = this.authorityDao.getAuthorityByType(AuthorityType.ROLE_USER);
         user.setAuthorities(new HashSet<>(Collections.singletonList(authority)));
         return this.userDao.add(user);
