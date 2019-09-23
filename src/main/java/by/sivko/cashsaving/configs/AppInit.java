@@ -12,6 +12,7 @@ public class AppInit extends AbstractAnnotationConfigDispatcherServletInitialize
         return new Class<?>[]{
                 WebConfig.class,
                 PersistenceConfig.class,
+                ServiceConfig.class,
                 WebSecurityConfig.class
         };
     }
