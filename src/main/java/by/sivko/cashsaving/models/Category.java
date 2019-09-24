@@ -17,7 +17,7 @@ import java.util.Optional;
 @Entity
 @Table(name = "categories")
 @NamedQueries({
-        @NamedQuery(name = "Category.findByPartOfName", query = "select c from Category c where c.user.id = :userId and c.name like :partOfCategoryName")
+        @NamedQuery(name = "Category.getAllCategoriesByUserId", query = "select c from Category c where c.user.id = :userId")
 })
 public class Category {
     @Id

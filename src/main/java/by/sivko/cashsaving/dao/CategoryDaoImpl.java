@@ -7,12 +7,11 @@ import java.util.List;
 
 @Repository
 public class CategoryDaoImpl extends GenericDaoImpl<Category, Long> implements CategoryDao {
+
     @Override
-    public List<Category> findByPartOfName(String partOfCategoryName, Long userId) {
-        return this.entityManager.createNamedQuery("Category.findByPartOfName", Category.class)
+    public List<Category> getAllCategories(Long userId) {
+        return this.entityManager.createNamedQuery("Category.getAllCategoriesByUserId", Category.class)
                 .setParameter("userId", userId)
-                .setParameter("partOfCategoryName", String.format("%%%s%%", partOfCategoryName))
                 .getResultList();
     }
-
 }

@@ -1,8 +1,7 @@
 package by.sivko.cashsaving.services;
 
+import by.sivko.cashsaving.exceptions.NotFoundEntityException;
 import by.sivko.cashsaving.models.Event;
-
-import java.util.Optional;
 
 public interface EventService {
     Event addEvent(Event event);
@@ -11,5 +10,7 @@ public interface EventService {
 
     Event updateEvent(Event event);
 
-    Optional<Event> getEventById(Long id);
+    Event getEventById(Long id) throws NotFoundEntityException;
+
+    Event removeEventById(Long id) throws NotFoundEntityException;
 }

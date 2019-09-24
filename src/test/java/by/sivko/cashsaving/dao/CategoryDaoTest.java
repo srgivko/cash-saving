@@ -10,6 +10,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import javax.persistence.PersistenceException;
 import java.math.BigDecimal;
 import java.util.Date;
+import java.util.List;
 import java.util.Optional;
 
 import static org.junit.Assert.*;
@@ -28,8 +29,6 @@ public class CategoryDaoTest extends AbstractDatabaseAnnotationInclude {
     private static final int CATEGORIES_SIZE = 6;
     private static Category EXIST_CATEGORY_1;
     private static final long EXIST_CATEGORY_ID_1 = 100000L;
-    private static Category EXIST_CATEGORY_2;
-    private static final long EXIST_CATEGORY_ID_2 = 100001L;
     private static final long NOT_EXIST_CATEGORY_ID = 100500L;
     private static final Category NEW_CATEGORY = new Category();
 
@@ -45,7 +44,6 @@ public class CategoryDaoTest extends AbstractDatabaseAnnotationInclude {
         NEW_CATEGORY.setEventList(null);
         NEW_CATEGORY.setName("new");
         EXIST_CATEGORY_1 = this.categoryDao.getById(EXIST_CATEGORY_ID_1).orElseThrow(RuntimeException::new);
-        EXIST_CATEGORY_2 = this.categoryDao.getById(EXIST_CATEGORY_ID_2).orElseThrow(RuntimeException::new);
     }
 
     @Test
@@ -68,6 +66,13 @@ public class CategoryDaoTest extends AbstractDatabaseAnnotationInclude {
     @Test
     public void getAllCategories() {
         assertEquals(this.categoryDao.getAll().size(), CATEGORIES_SIZE);
+    }
+
+    @Test
+    public void getAllCategoriesById() {
+        Category category = this.categoryDao.getById(EXIST_CATEGORY_ID_1).orElseThrow(RuntimeException::new);
+        List<Category> allCategories = this.categoryDao.getAllCategories(category.getUser().getId());
+        assertEquals(CATEGORIES_SIZE, allCategories.size());
     }
 
     @Test
@@ -133,19 +138,6 @@ public class CategoryDaoTest extends AbstractDatabaseAnnotationInclude {
         assertEquals(this.categoryDao.getAll().size(), CATEGORIES_SIZE);
         this.categoryDao.edit(NEW_CATEGORY);
         assertEquals(this.categoryDao.getAll().size(), CATEGORIES_SIZE + 1);
-    }
-
-    @Test
-    public void findByPartOfName() {
-        assertEquals(this.categoryDao.findByPartOfName("", EXIST_CATEGORY_1.getId()).size(), CATEGORIES_SIZE);
-        assertEquals(this.categoryDao.findByPartOfName(" ", EXIST_CATEGORY_1.getId()).size(), 0);
-        assertEquals(this.categoryDao.findByPartOfName("100000", EXIST_CATEGORY_1.getId()).size(), 1);
-        assertEquals(this.categoryDao.findByPartOfName("name", EXIST_CATEGORY_1.getId()).size(), CATEGORIES_SIZE);
-    }
-
-    @Test
-    public void findByPartOfNameInEmpty() {
-        assertEquals(this.categoryDao.findByPartOfName("", EXIST_CATEGORY_2.getId()).size(), 0);
     }
 }
 

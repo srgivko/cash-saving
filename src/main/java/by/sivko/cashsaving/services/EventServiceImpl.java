@@ -1,18 +1,23 @@
 package by.sivko.cashsaving.services;
 
+import by.sivko.cashsaving.annotations.Logging;
 import by.sivko.cashsaving.dao.EventDao;
+import by.sivko.cashsaving.exceptions.NotFoundEntityException;
 import by.sivko.cashsaving.models.Event;
+import org.slf4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import javax.transaction.Transactional;
-import java.util.Optional;
 
 @Service
 @Transactional
 public class EventServiceImpl implements EventService {
 
     private final EventDao eventDao;
+
+    @Logging
+    private Logger logger;
 
     @Autowired
     public EventServiceImpl(EventDao eventDao) {
@@ -21,21 +26,41 @@ public class EventServiceImpl implements EventService {
 
     @Override
     public Event addEvent(Event event) {
-        return this.eventDao.add(event);
+        this.eventDao.add(event);
+        logger.debug(String.format("Add event with %d", event.getId()));
+        return event;
     }
 
     @Override
     public Event removeEvent(Event event) {
-        return this.eventDao.delete(event);
+        event = this.eventDao.delete(event);
+        logger.debug(String.format("Delete event with %d", event.getId()));
+        return event;
     }
 
     @Override
     public Event updateEvent(Event event) {
-        return this.eventDao.edit(event);
+        event = this.eventDao.edit(event);
+        logger.debug(String.format("Update event with %d", event.getId()));
+        return event;
     }
 
     @Override
-    public Optional<Event> getEventById(Long id) {
-        return this.eventDao.getById(id);
+    public Event getEventById(Long id) throws NotFoundEntityException {
+        Event event = this.eventDao.getById(id).orElseThrow(() -> new NotFoundEntityException(id));
+        logger.debug(String.format("Get event with %d", event.getId()));
+        return event;
+    }
+
+    @Override
+    public Event removeEventById(Long id) throws NotFoundEntityException {
+        Event event = this.eventDao.getById(id).orElseThrow(() -> new NotFoundEntityException(id));
+        this.eventDao.delete(event);
+        logger.debug(String.format("Remove event with %d", event.getId()));
+        return event;
+    }
+
+    public void setLogger(Logger logger) {
+        this.logger = logger;
     }
 }

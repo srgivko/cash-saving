@@ -51,4 +51,5 @@ public class GenericDaoImpl<T, PK extends Serializable> implements GenericDao<T,
                 .getResultList();
         return resultList != null ? resultList : Collections.emptyList();
     }
+
 }

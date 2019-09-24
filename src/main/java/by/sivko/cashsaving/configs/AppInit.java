@@ -14,7 +14,8 @@ public class AppInit extends AbstractAnnotationConfigDispatcherServletInitialize
                 PersistenceConfig.class,
                 ServiceConfig.class,
                 WebSecurityConfig.class,
-                LiquibaseConfig.class
+                LiquibaseConfig.class,
+                AnnotationConfig.class
         };
     }
 
