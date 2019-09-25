@@ -27,28 +27,28 @@ public class EventServiceImpl implements EventService {
     @Override
     public Event addEvent(Event event) {
         this.eventDao.add(event);
-        logger.debug(String.format("Add event with %d", event.getId()));
+        logger.info(String.format("Add event with %d", event.getId()));
         return event;
     }
 
     @Override
     public Event removeEvent(Event event) {
         event = this.eventDao.delete(event);
-        logger.debug(String.format("Delete event with %d", event.getId()));
+        logger.info(String.format("Delete event with %d", event.getId()));
         return event;
     }
 
     @Override
     public Event updateEvent(Event event) {
         event = this.eventDao.edit(event);
-        logger.debug(String.format("Update event with %d", event.getId()));
+        logger.info(String.format("Update event with %d", event.getId()));
         return event;
     }
 
     @Override
     public Event getEventById(Long id) throws NotFoundEntityException {
         Event event = this.eventDao.getById(id).orElseThrow(() -> new NotFoundEntityException(id));
-        logger.debug(String.format("Get event with %d", event.getId()));
+        logger.info(String.format("Get event with %d", event.getId()));
         return event;
     }
 
@@ -56,7 +56,7 @@ public class EventServiceImpl implements EventService {
     public Event removeEventById(Long id) throws NotFoundEntityException {
         Event event = this.eventDao.getById(id).orElseThrow(() -> new NotFoundEntityException(id));
         this.eventDao.delete(event);
-        logger.debug(String.format("Remove event with %d", event.getId()));
+        logger.info(String.format("Remove event with %d", event.getId()));
         return event;
     }
 

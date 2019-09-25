@@ -13,6 +13,7 @@ import org.springframework.security.config.annotation.web.configuration.WebSecur
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.security.web.csrf.CookieCsrfTokenRepository;
 
 @Configuration
 @EnableWebSecurity
@@ -36,11 +37,19 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 
     @Override
     protected void configure(HttpSecurity http) throws Exception {
-        http.authorizeRequests()
-                .antMatchers("/user").access("hasRole('USER')")
+        http.csrf().csrfTokenRepository(CookieCsrfTokenRepository.withHttpOnlyFalse())
+                .and()
+                .authorizeRequests()
+                .antMatchers("/home", "/user").access("hasRole('USER')")
                 .antMatchers("/admin").access("hasRole('ADMIN')")
                 .antMatchers("/superadmin").access("hasRole('SUPERADMIN')")
-                .and().formLogin().defaultSuccessUrl("/", false);
+                .and()
+                .formLogin()
+                .loginPage("/login")
+                .defaultSuccessUrl("/home", true)
+                .permitAll()
+                .and()
+                .logout().permitAll();
     }
 
     @Bean

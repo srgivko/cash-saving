@@ -38,6 +38,7 @@ public class EventServiceTest extends AbstractServiceAnnotationInclude {
         EVENT.setId(1L);
         when(this.eventDao.add(EVENT)).thenReturn(EVENT);
         when(this.eventDao.delete(EVENT)).thenReturn(EVENT);
+        when(this.eventDao.edit(EVENT)).thenReturn(EVENT);
         when(this.eventDao.getById(EVENT.getId())).thenReturn(Optional.of(EVENT));
     }
 

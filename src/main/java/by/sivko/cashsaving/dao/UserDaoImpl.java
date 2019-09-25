@@ -17,7 +17,8 @@ public class UserDaoImpl extends GenericDaoImpl<User, Long> implements UserDao {
                     .setParameter("username", username)
                     .getSingleResult();
         } catch (NoResultException nre) {
-            nre.printStackTrace();
+            // TODO: 9/25/19 add log
+           // nre.printStackTrace();
         }
         return user != null ? Optional.of(user) : Optional.empty();
     }
@@ -30,7 +31,8 @@ public class UserDaoImpl extends GenericDaoImpl<User, Long> implements UserDao {
                     .createNamedQuery("User.findByEmail", User.class)
                     .setParameter("email", email).getSingleResult();
         } catch (NoResultException nre) {
-            nre.printStackTrace();
+            // TODO: 9/25/19 add log
+            // nre.printStackTrace();
         }
         return user != null ? Optional.of(user) : Optional.empty();
     }
