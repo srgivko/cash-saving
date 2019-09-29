@@ -4,31 +4,28 @@ import org.springframework.web.filter.CharacterEncodingFilter;
 import org.springframework.web.servlet.support.AbstractAnnotationConfigDispatcherServletInitializer;
 
 import javax.servlet.Filter;
+import javax.servlet.ServletContext;
+import javax.servlet.ServletException;
 
-public class AppInit extends AbstractAnnotationConfigDispatcherServletInitializer {
-
+public class WebAppInit extends AbstractAnnotationConfigDispatcherServletInitializer {
     @Override
     protected Class<?>[] getRootConfigClasses() {
-        return new Class<?>[]{
-                WebConfig.class,
-                PersistenceConfig.class,
-                ServiceConfig.class,
-                WebSecurityConfig.class,
-                LiquibaseConfig.class,
-                AnnotationConfig.class
-        };
+        return new Class<?>[]{SpringConfiguration.class};
     }
 
     @Override
     protected Class<?>[] getServletConfigClasses() {
-        return new Class<?>[]{
-                WebConfig.class
-        };
+        return new Class<?>[]{WebConfig.class};
     }
 
     @Override
     protected String[] getServletMappings() {
         return new String[]{"/"};
+    }
+
+    @Override
+    public void onStartup(ServletContext servletContext) throws ServletException {
+        super.onStartup(servletContext);
     }
 
     @Override
@@ -38,5 +35,4 @@ public class AppInit extends AbstractAnnotationConfigDispatcherServletInitialize
         characterEncodingFilter.setForceEncoding(true);
         return new Filter[]{characterEncodingFilter};
     }
-
 }

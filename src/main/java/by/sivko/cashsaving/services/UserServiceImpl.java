@@ -1,95 +1,67 @@
 package by.sivko.cashsaving.services;
 
-import by.sivko.cashsaving.annotations.Logging;
-import by.sivko.cashsaving.dao.AuthorityDao;
-import by.sivko.cashsaving.dao.UserDao;
-import by.sivko.cashsaving.exceptions.NotFoundEntityException;
-import by.sivko.cashsaving.models.Authority;
 import by.sivko.cashsaving.models.AuthorityType;
 import by.sivko.cashsaving.models.User;
-import org.slf4j.Logger;
+import by.sivko.cashsaving.repositories.AuthorityRepository;
+import by.sivko.cashsaving.repositories.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
-import javax.transaction.Transactional;
-import java.util.Collections;
-import java.util.HashSet;
 import java.util.Optional;
 
 @Service
-@Transactional
 public class UserServiceImpl implements UserService {
 
-    private final UserDao userDao;
+    private final UserRepository userRepository;
 
-    private final AuthorityDao authorityDao;
+    private final AuthorityRepository authorityRepository;
 
     private final PasswordEncoder passwordEncoder;
 
-    @Logging
-    Logger logger;
-
     @Autowired
-    public UserServiceImpl(UserDao userDao, AuthorityDao authorityDao, PasswordEncoder passwordEncoder) {
-        this.userDao = userDao;
-        this.authorityDao = authorityDao;
+    public UserServiceImpl(UserRepository userRepository, AuthorityRepository authorityRepository, PasswordEncoder passwordEncoder) {
+        this.userRepository = userRepository;
+        this.authorityRepository = authorityRepository;
         this.passwordEncoder = passwordEncoder;
     }
 
+    @Transactional
     @Override
-    public User addUser(User user) {
+    public User saveUser(User user) {
         user.setPassword(passwordEncoder.encode(user.getPassword()));
-        Authority authority = this.authorityDao.getAuthorityByType(AuthorityType.ROLE_USER);
-        user.setAuthorities(new HashSet<>(Collections.singletonList(authority)));
-        logger.info(String.format("Add new user with %d", user.getId()));
-        return this.userDao.add(user);
+        user.addAuthority(this.authorityRepository.findByType(AuthorityType.ROLE_USER));
+        return this.userRepository.save(user);
     }
 
+    @Transactional
     @Override
-    public User removeUser(User user) {
-        this.userDao.delete(user);
-        logger.info(String.format("Delete new user with %d", user.getId()));
-        return user;
+    public void removeUser(User user) {
+        this.userRepository.delete(user);
     }
 
+    @Transactional(readOnly = true)
     @Override
-    public User updateUser(User user) {
-        user = this.userDao.edit(user);
-        logger.info(String.format("Update new user with %d", user.getId()));
-        return user;
+    public Optional<User> getUserById(Long id) {
+        return this.userRepository.findById(id);
     }
 
+    @Transactional
     @Override
-    public User getUserById(Long id) throws NotFoundEntityException {
-        User user = this.userDao.getById(id).orElseThrow(() -> new NotFoundEntityException(id));
-        logger.info(String.format("Get new user with %d", user.getId()));
-        return user;
+    public void removeUserById(Long id) {
+        this.userRepository.deleteById(id);
     }
 
-    @Override
-    public User removeUserById(Long id) throws NotFoundEntityException {
-        User user = this.userDao.getById(id).orElseThrow(() -> new NotFoundEntityException(id));
-        this.userDao.delete(user);
-        logger.info(String.format("Remove new user with %d", user.getId()));
-        return user;
-    }
-
-    public void setLogger(Logger logger) {
-        this.logger = logger;
-    }
-
+    @Transactional(readOnly = true)
     @Override
     public Optional<User> findByEmail(String email) {
-        Optional<User> optionalUser = this.userDao.findByEmail(email);
-        logger.info(String.format("findByEmail User with email %s", email));
-        return optionalUser;
+        return this.userRepository.findByEmail(email);
     }
 
+    @Transactional(readOnly = true)
     @Override
     public Optional<User> findByUsername(String username) {
-        Optional<User> optionalUser = this.userDao.findByUsername(username);
-        logger.info(String.format("findByUsername User with username %s", username));
-        return optionalUser;
+        return this.userRepository.findByUsername(username);
     }
 }

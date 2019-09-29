@@ -18,7 +18,7 @@
         <h3>Registration form</h3>
         <div class="form-group">
             <form:errors path="username" element="label" cssClass="alert alert-danger"/>
-            <form:input path="username" class="form-control input-lg"  placeholder="Username" />
+            <form:input path="username" class="form-control input-lg" placeholder="Username"/>
         </div>
         <div class="form-group">
             <form:errors path="email" element="label" cssClass="alert alert-danger"/>
@@ -26,11 +26,11 @@
         </div>
         <div class="form-group">
             <form:errors path="password" element="label" cssClass="alert alert-danger"/>
-            <input type="password" name="password" placeholder="password" value="passwrod">
+            <form:input path="password" class="form-control input-lg" type="password"/>
         </div>
         <div class="form-group">
             <form:errors path="confirmPassword" element="label" cssClass="alert alert-danger"/>
-            <form:input path="confirmPassword" class="form-control input-lg"/>
+            <form:input path="confirmPassword" class="form-control input-lg" type="password"/>
         </div>
         <button class="btn btn-lg btn-primary btn-block" type="submit" value="OK">Login</button>
     </form:form>

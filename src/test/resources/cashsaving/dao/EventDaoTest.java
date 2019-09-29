@@ -1,8 +1,7 @@
 package by.sivko.cashsaving.dao;
 
-import by.sivko.cashsaving.dao.datasetLoaders.DefaultDataSetLoader;
+import by.sivko.cashsaving.AbstractDatabaseAnnotationInclude;
 import by.sivko.cashsaving.models.Event;
-import com.github.springtestdbunit.annotation.*;
 import org.junit.Before;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -10,20 +9,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import java.math.BigDecimal;
 import java.util.Optional;
 
-import static by.sivko.cashsaving.dao.AbstractDatabaseAnnotationInclude.*;
 import static org.junit.Assert.*;
 
-@DatabaseSetups({
-        @DatabaseSetup(LINK_USERS_DATA_SET),
-        @DatabaseSetup(LINK_CATEGORIES_DATA_SET),
-        @DatabaseSetup(LINK_EVENTS_DATA_SET)
-})
-@DatabaseTearDowns({
-        @DatabaseTearDown(type = DatabaseOperation.DELETE_ALL, value = LINK_EVENTS_DATA_SET),
-        @DatabaseTearDown(type = DatabaseOperation.DELETE_ALL, value = LINK_CATEGORIES_DATA_SET),
-        @DatabaseTearDown(type = DatabaseOperation.DELETE_ALL, value = LINK_USERS_DATA_SET)
-})
-@DbUnitConfiguration(dataSetLoader = DefaultDataSetLoader.class)
+
 public class EventDaoTest extends AbstractDatabaseAnnotationInclude {
 
     private static final int EVENT_LIST_SIZE = 7;

@@ -1,5 +1,8 @@
+<%--@elvariable id="_csrf" type="org.springframework.security.web.csrf.CsrfToken"--%>
+<%--@elvariable id="errorMessge" type="java.lang.String"--%>
 <%@ taglib prefix="form" uri="http://www.springframework.org/tags/form" %>
 <%@ taglib prefix="spring" uri="http://www.springframework.org/tags" %>
+<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <%@ page contentType="text/html;charset=UTF-8" %>
 <html>
 <head>
@@ -12,28 +15,20 @@
 </head>
 <body>
 <div class="container login-container">
-    <div class="row">
-        <form class="col-md-6 login-form-1" action="<spring:url value="login"/>" method="post">
-            <%--@elvariable id="_csrf" type="org.springframework.security.web.csrf.CsrfToken"--%>
-            <h3>Login Form 1</h3>
-            <div class="form-group">
-                <input type="text" class="form-control" placeholder="Your Email or Username *" value="" name="username">
-            </div>
-            <div class="form-group">
-                <input type="password" class="form-control" placeholder="Your Password *" value="" name="password">
-            </div>
-            <div class="form-group">
-                <input type="submit" class="btn btn-form btn-primary" value="Register">
-            </div>
-            <div class="form-group">
-                <a href="#" class="btnForgetPwd">Forget Password?</a>
-            </div>
-            <label>
-                <input hidden name="${_csrf.parameterName}" value="${_csrf.token}">
-            </label>
-        </form>
-        <img class="logo-img" src="https://image.ibb.co/n7oTvU/logo_white.png" alt="">
-    </div>
+    <h1>Login</h1>
+    <h1>Spring Security 5 - Login Form</h1>
+
+
+    <c:if test="${not empty errorMessage}">
+        <div style="color:red; font-weight: bold; margin: 30px 0px;">${errorMessage}</div>
+    </c:if>
+
+    <form name='login' action="/login" method='POST'>
+        <input type='text' name='username' value=''>
+        <input type='password' name='password'/>
+        <input name="submit" type="submit" value="submit"/>
+        <input type="hidden" name="${_csrf.parameterName}" value="${_csrf.token}"/>
+    </form>
 </div>
 </body>
 </html>

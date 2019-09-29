@@ -1,27 +1,32 @@
 package by.sivko.cashsaving.controllers;
 
 import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.servlet.ModelAndView;
-
-import java.security.Principal;
 
 @Controller
 public class LoginController {
 
-    @RequestMapping("/home")
-    public ModelAndView home() {
+    /*@RequestMapping(value = "/login", method = RequestMethod.GET)
+    public ModelAndView loginPage(@RequestParam(value = "error", required = false) String error,
+                              @RequestParam(value = "logout", required = false) String logout) {
         ModelAndView modelAndView = new ModelAndView();
-        modelAndView.setViewName("homeJspPage");
+        String errorMessage = null;
+        if(error != null) {
+            errorMessage = "Username or Password is incorrect !!";
+        }
+        if(logout != null) {
+            errorMessage = "You have been successfully logged out !!";
+        }
+        modelAndView.addObject("errorMessage", errorMessage);
+        modelAndView.setViewName("loginJspPage");
         return modelAndView;
     }
 
-    @RequestMapping(value = "/login", method = RequestMethod.GET)
-    public ModelAndView login(Principal principal) {
-        ModelAndView modelAndView = new ModelAndView();
-        if (principal != null) modelAndView.setViewName("homeJspPage");
-        else modelAndView.setViewName("loginJspPage");
-        return modelAndView;
-    }
+    @RequestMapping(value="/logout", method = RequestMethod.GET)
+    public ModelAndView logoutPage (HttpServletRequest request, HttpServletResponse response) {
+        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+        if (auth != null){
+            new SecurityContextLogoutHandler().logout(request, response, auth);
+        }
+        return new ModelAndView("redirect:/login?logout=true");
+    }*/
 }

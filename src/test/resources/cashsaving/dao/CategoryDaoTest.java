@@ -1,8 +1,7 @@
 package by.sivko.cashsaving.dao;
 
-import by.sivko.cashsaving.dao.datasetLoaders.DefaultDataSetLoader;
+import by.sivko.cashsaving.AbstractDatabaseAnnotationInclude;
 import by.sivko.cashsaving.models.Category;
-import com.github.springtestdbunit.annotation.*;
 import org.junit.Before;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -15,15 +14,6 @@ import java.util.Optional;
 
 import static org.junit.Assert.*;
 
-@DatabaseSetups({
-        @DatabaseSetup(AbstractDatabaseAnnotationInclude.LINK_USERS_DATA_SET),
-        @DatabaseSetup(AbstractDatabaseAnnotationInclude.LINK_CATEGORIES_DATA_SET)
-})
-@DatabaseTearDowns({
-        @DatabaseTearDown(type = DatabaseOperation.DELETE_ALL, value = AbstractDatabaseAnnotationInclude.LINK_CATEGORIES_DATA_SET),
-        @DatabaseTearDown(type = DatabaseOperation.DELETE_ALL, value = AbstractDatabaseAnnotationInclude.LINK_USERS_DATA_SET)
-})
-@DbUnitConfiguration(dataSetLoader = DefaultDataSetLoader.class)
 public class CategoryDaoTest extends AbstractDatabaseAnnotationInclude {
 
     private static final int CATEGORIES_SIZE = 6;

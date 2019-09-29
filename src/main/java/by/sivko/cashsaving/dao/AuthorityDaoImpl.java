@@ -20,7 +20,7 @@ public class AuthorityDaoImpl implements AuthorityDao {
         try {
             authority = this.entityManager
                     .createNamedQuery("Authority.getAuthorityByType", Authority.class)
-                    .setParameter("name", authorityType)
+                    .setParameter("type", authorityType)
                     .getSingleResult();
         } catch (NoResultException ex) {
             ex.printStackTrace();

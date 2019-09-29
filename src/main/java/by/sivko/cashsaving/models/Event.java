@@ -1,39 +1,43 @@
 package by.sivko.cashsaving.models;
 
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
 import javax.persistence.*;
-import javax.validation.constraints.DecimalMin;
 import javax.validation.constraints.NotEmpty;
+import javax.validation.constraints.NotNull;
 import java.math.BigDecimal;
 import java.util.Date;
 
 @Data
+@EqualsAndHashCode(callSuper = true)
+@ToString(exclude = "category")
 @NoArgsConstructor
 @AllArgsConstructor
 @Entity
 @Table(name = "events")
-public class Event {
+public class Event extends BaseEntity {
 
-    @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
-    private Long id;
+    private static final long serialVersionUID = -6470119171778441523L;
 
     @Enumerated(EnumType.STRING)
-    @Column(nullable = false)
+    @Column
+    @NotNull
     private Type type;
 
-    @Column(nullable = false)
+    @Column
+    @NotEmpty
+    private String name;
+
+    @Column
     @NotEmpty
     private String description;
 
-    @Column(nullable = false)
-    @DecimalMin(value = "0.00", message = "*Amount has to be non negative number")
+    @Column
+    @NotNull
     private BigDecimal amount;
 
-    @Column(nullable = false)
+    @Column
+    @NotNull
     @Temporal(TemporalType.TIMESTAMP)
     private Date createAt = new Date();
 

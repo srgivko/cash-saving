@@ -1,49 +1,55 @@
 package by.sivko.cashsaving.models;
 
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.NoArgsConstructor;
-import org.hibernate.validator.constraints.Length;
+import lombok.*;
 
 import javax.persistence.*;
+import javax.validation.constraints.NotEmpty;
+import javax.validation.constraints.NotNull;
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.Optional;
 
+
 @Data
+@EqualsAndHashCode(callSuper = true)
+@ToString(exclude = {"user", "eventList"})
 @NoArgsConstructor
 @AllArgsConstructor
 @Entity
 @Table(name = "categories")
 @NamedQueries({
-        @NamedQuery(name = "Category.getAllCategoriesByUserId", query = "select c from Category c where c.user.id = :userId")
+        @NamedQuery(name = "Category.getAllCategoriesByUserId", query = "select c from Category c where c.user.id = :id"),
+        @NamedQuery(name = "Category.getAllCategoriesByUserName", query = "select c from Category c where c.user.username = :username")
 })
-public class Category {
+public class Category extends BaseEntity {
 
-    @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
-    private Long id;
 
-    @Column(nullable = false)
-    @Length(min = 3, message = "*Name must have at least 3 characters")
+    private static final long serialVersionUID = -1088780004560221054L;
+
+    @Column
+    @NotEmpty
     private String name;
 
-    @Column(nullable = false)
+    @Column
+    @NotEmpty
     private String description;
 
-    @Column(nullable = false)
+    @Column
+    @NotNull
     private BigDecimal capacity;
 
-    @Column(nullable = false)
+    @Column
+    @NotNull
     @Temporal(TemporalType.TIMESTAMP)
     private Date createAt = new Date();
 
     @ManyToOne
     private User user;
+
     @OneToMany(mappedBy = "category", cascade = CascadeType.ALL, targetEntity = Event.class,
-            fetch = FetchType.LAZY)
+            fetch = FetchType.EAGER)
     private List<Event> eventList = new ArrayList<>();
 
     public void addEvent(Event event) {

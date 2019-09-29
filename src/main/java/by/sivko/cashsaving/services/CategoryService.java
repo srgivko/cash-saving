@@ -1,22 +1,26 @@
 package by.sivko.cashsaving.services;
 
-import by.sivko.cashsaving.exceptions.NotFoundEntityException;
 import by.sivko.cashsaving.models.Category;
 
-import java.util.List;
+import java.util.Collection;
+import java.util.Date;
+import java.util.Optional;
 
 public interface CategoryService {
     Category addCategory(Category category);
 
-    Category removeCategory(Category category);
+    void removeCategory(Category category);
 
-    Category updateCategory(Category category);
 
-    Category getCategoryById(Long id) throws NotFoundEntityException;
+    Optional<Category> getCategoryById(Long id);
 
-    Category removeCategoryById(Long id) throws NotFoundEntityException;
+    void removeCategoryById(Long id);
 
-    List<Category> getAllCategoriesByUserId(Long userId);
+    Collection<Category> getAllCategoriesByUserId(Long userId);
 
-    List<Category> getAllCategoriesByUserIdAndPartOfName(Long userId, String pathOfName);
+    abstract Collection<Category> getAllCategoriesByUserUsername(String username);
+
+    Collection<Category> getAllCategoriesByNameLike(String name);
+
+    Collection<Category> getAllCategoriesBetweenDates(Date start, Date end);
 }

@@ -14,13 +14,13 @@ import java.util.concurrent.TimeUnit;
 
 @Configuration
 @EnableWebMvc
-@ComponentScan("by.sivko.cashsaving.controllers")
+@ComponentScan({"by.sivko.cashsaving.controllers"})
 public class WebConfig implements WebMvcConfigurer {
 
     @Override
     public void addResourceHandlers(ResourceHandlerRegistry registry) {
         registry.addResourceHandler("/resources/**").addResourceLocations("/resources/")
-        .setCacheControl(CacheControl.maxAge(2, TimeUnit.HOURS).cachePublic());
+                .setCacheControl(CacheControl.maxAge(2, TimeUnit.HOURS).cachePublic());
     }
 
     @Bean
@@ -31,5 +31,7 @@ public class WebConfig implements WebMvcConfigurer {
         resolver.setViewClass(JstlView.class);
         return resolver;
     }
+
+
 
 }

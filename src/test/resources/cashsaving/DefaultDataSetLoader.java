@@ -1,4 +1,4 @@
-package by.sivko.cashsaving.dao.datasetLoaders;
+package by.sivko.cashsaving;
 
 import com.github.springtestdbunit.dataset.AbstractDataSetLoader;
 import org.dbunit.dataset.IDataSet;

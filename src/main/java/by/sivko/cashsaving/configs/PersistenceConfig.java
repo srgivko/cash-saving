@@ -1,11 +1,9 @@
 package by.sivko.cashsaving.configs;
 
-import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.context.annotation.PropertySource;
-import org.springframework.core.env.Environment;
 import org.springframework.jdbc.datasource.DriverManagerDataSource;
 import org.springframework.orm.jpa.JpaTransactionManager;
 import org.springframework.orm.jpa.LocalContainerEntityManagerFactoryBean;
@@ -19,50 +17,66 @@ import java.util.Properties;
 
 @Configuration
 @EnableTransactionManagement
-@PropertySource({"classpath:jpa.properties"})
-@ComponentScan({"by.sivko.cashsaving.dao"})
+@ComponentScan("by.sivko.cashsaving.configs.PropertyReaders")
 public class PersistenceConfig {
 
-    private final Environment env;
+    @Value("${hibernate.hbm2ddl.auto}")
+    private String hibernate_hbm2ddl_auto;
 
-    @Autowired
-    public PersistenceConfig(Environment env) {
-        this.env = env;
-    }
+    @Value("${hibernate.dialect}")
+    private String hibernate_dialect;
+
+    @Value("${hibernate.show_sql}")
+    private String hibernate_show_sql;
+
+    @Value("${hibernate.format_sql}")
+    private String hibernate_format_sql;
+
+    @Value("${spring.datasource.url}")
+    private String datasource_url;
+
+    @Value("${spring.datasource.driverClassName}")
+    private String datasource_driverClass;
+
+    @Value("${spring.datasource.username}")
+    private String datasource_username;
+
+    @Value("${spring.datasource.password}")
+    private String datasource_password;
 
     private Properties getHibernateProperties() {
         Properties properties = new Properties();
-        properties.setProperty("hibernate.hbm2ddl.auto", env.getProperty("jpa.hibernate.ddl-auto"));
-        properties.setProperty("hibernate.dialect", env.getProperty("jpa.properties.hibernate.dialect"));
-        properties.setProperty("hibernate.show_sql", env.getProperty("jpa.show-sql"));
-        properties.setProperty("hibernate.format_sql", env.getProperty("jpa.properties.hibernate.format_sql"));
+        properties.setProperty("hibernate.hbm2ddl.auto", hibernate_hbm2ddl_auto);
+        properties.setProperty("hibernate.dialect", hibernate_dialect);
+        properties.setProperty("hibernate.show_sql", hibernate_show_sql);
+        properties.setProperty("hibernate.format_sql", hibernate_format_sql);
         return properties;
     }
 
     @Bean
-    public LocalContainerEntityManagerFactoryBean entityManagerFactoryBean() {
+    public LocalContainerEntityManagerFactoryBean entityManagerFactory() {
         LocalContainerEntityManagerFactoryBean localContainerEntityManagerFactoryBean = new LocalContainerEntityManagerFactoryBean();
-        localContainerEntityManagerFactoryBean.setDataSource(getDataSource());
+        localContainerEntityManagerFactoryBean.setDataSource(dataSource());
         localContainerEntityManagerFactoryBean.setPackagesToScan("by.sivko.cashsaving.models");
         localContainerEntityManagerFactoryBean.setJpaVendorAdapter(new HibernateJpaVendorAdapter());
         localContainerEntityManagerFactoryBean.setJpaProperties(getHibernateProperties());
         return localContainerEntityManagerFactoryBean;
     }
 
-    @Bean(name="dataSource")
-    public DataSource getDataSource() {
+    @Bean
+    public DataSource dataSource() {
         DriverManagerDataSource dataSource = new DriverManagerDataSource();
-        dataSource.setDriverClassName(Objects.requireNonNull(env.getProperty("jpa.datasource.driverClassName")));
-        dataSource.setUrl(env.getProperty("jpa.datasource.url"));
-        dataSource.setUsername(env.getProperty("jpa.datasource.username"));
-        dataSource.setPassword(env.getProperty("jpa.datasource.password"));
+        dataSource.setDriverClassName(Objects.requireNonNull(datasource_driverClass));
+        dataSource.setUrl(datasource_url);
+        dataSource.setUsername(datasource_username);
+        dataSource.setPassword(datasource_password);
         return dataSource;
     }
 
     @Bean
     public PlatformTransactionManager transactionManager() {
         JpaTransactionManager transactionManager = new JpaTransactionManager();
-        transactionManager.setEntityManagerFactory(entityManagerFactoryBean().getObject());
+        transactionManager.setEntityManagerFactory(entityManagerFactory().getObject());
         return transactionManager;
     }
 

@@ -1,9 +1,9 @@
 package by.sivko.cashsaving.dao;
 
+import by.sivko.cashsaving.AbstractDatabaseAnnotationInclude;
 import by.sivko.cashsaving.models.Authority;
 import by.sivko.cashsaving.models.AuthorityType;
 import by.sivko.cashsaving.models.User;
-import com.github.springtestdbunit.annotation.*;
 import org.junit.Before;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -12,21 +12,10 @@ import java.util.List;
 import java.util.Optional;
 import java.util.Set;
 
-import static by.sivko.cashsaving.dao.AbstractDatabaseAnnotationInclude.*;
 import static org.hamcrest.CoreMatchers.is;
 import static org.junit.Assert.*;
 
-@DatabaseSetups({
-        @DatabaseSetup(LINK_USERS_DATA_SET),
-        @DatabaseSetup(LINK_AUTHORITIES_DATA_SET),
-        @DatabaseSetup(LINK_USER_AUTHORITY_DATA_SET)
-})
-@DatabaseTearDowns({
-        @DatabaseTearDown(type = DatabaseOperation.DELETE_ALL, value = LINK_USER_AUTHORITY_DATA_SET),
-        @DatabaseTearDown(type = DatabaseOperation.DELETE_ALL, value = LINK_AUTHORITIES_DATA_SET),
-        @DatabaseTearDown(type = DatabaseOperation.DELETE_ALL, value = LINK_USERS_DATA_SET)
-})
-@DbUnitConfiguration
+
 public class UserDaoTest extends AbstractDatabaseAnnotationInclude {
 
     private static final User EXIST_USER_1 = new User(100000L, "username-100000", "password-100000", "email-100000", null, null);

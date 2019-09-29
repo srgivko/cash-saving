@@ -1,6 +1,8 @@
 package by.sivko.cashsaving.exceptions;
 
-public class NotFoundEntityException extends Exception {
+public class NotFoundEntityException extends RuntimeException {
+
+    private static final long serialVersionUID = 2781411015176351522L;
 
     private static final String DEFAULT_MESSAGE = "Not found entity";
 
