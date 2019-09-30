@@ -1,5 +1,8 @@
 package by.sivko.cashsaving.controllers;
 
+import org.springframework.stereotype.Controller;
+
+@Controller
 public class HomeController {
 
     /*private final CategoryService categoryService;
