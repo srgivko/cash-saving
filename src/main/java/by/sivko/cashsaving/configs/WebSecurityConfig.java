@@ -1,6 +1,8 @@
 package by.sivko.cashsaving.configs;
 
-import by.sivko.cashsaving.repositories.UserRepository;
+import by.sivko.cashsaving.models.Authority;
+import by.sivko.cashsaving.models.AuthorityType;
+import by.sivko.cashsaving.services.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -17,7 +19,6 @@ import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
-import org.springframework.security.web.csrf.CookieCsrfTokenRepository;
 import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -29,15 +30,20 @@ import java.util.Optional;
 @EnableWebSecurity
 public class WebSecurityConfig {
 
-    private static final String[] UNSECURED_RESOURCE_LIST = new String[]{"/resources/**", "/assets/**", "/css/**",
-            "/webjars/**", "/images/**", "/dandelion/**", "/js/**"};
+    private static final String[] UNSECURED_RESOURCE_LIST = new String[]{"/resources/**"};
 
-    private static final String[] UNAUTHORIZED_RESOURCE_LIST = new String[]{"/test.html", "/", "/unauthorized*",
-            "/error*", "/users*", "/accessDenied"};
+    private static final String[] UNAUTHORIZED_RESOURCE_LIST = new String[]{ "/login*", "/registration*"};
 
     @Configuration
     @Profile({"dev"})
-    protected static class BasicUserDetailsServiceSetup {
+    protected static class BasicUserDetailsServiceSetup  {
+
+        private final PasswordEncoder passwordEncoder;
+
+        @Autowired
+        public BasicUserDetailsServiceSetup(PasswordEncoder passwordEncoder) {
+            this.passwordEncoder = passwordEncoder;
+        }
 
         @Bean
         public UserDetailsService getBasicUserDetailsService() {
@@ -47,7 +53,7 @@ public class WebSecurityConfig {
         public class BasicUserDetailsService implements UserDetailsService {
             @Override
             public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
-                return new User(username, "", Collections.emptyList());
+                return new User(username, passwordEncoder.encode(""), Collections.singletonList(new Authority(AuthorityType.ROLE_USER)));
             }
         }
     }
@@ -56,32 +62,32 @@ public class WebSecurityConfig {
     @Profile({"live"})
     protected static class MyUserDetailsServiceSetup {
 
-        private final UserRepository userRepository;
+        private final UserService userService;
 
         @Autowired
-        public MyUserDetailsServiceSetup(UserRepository userRepository) {
-            this.userRepository = userRepository;
+        public MyUserDetailsServiceSetup(UserService userService) {
+            this.userService = userService;
         }
 
         @Bean
         public UserDetailsService getMyUserDetailsService() {
-            return new MyUserDetailsService(userRepository);
+            return new MyUserDetailsService(userService);
         }
 
         public class MyUserDetailsService implements UserDetailsService {
 
-            private final UserRepository userRepository;
+            private final UserService userService;
 
-            MyUserDetailsService(UserRepository userRepository) {
-                this.userRepository = userRepository;
+            MyUserDetailsService(UserService userService) {
+                this.userService = userService;
             }
 
             @Override
             @Transactional(readOnly = true)
             public UserDetails loadUserByUsername(String usernameOrEmail) throws UsernameNotFoundException {
-                Optional<by.sivko.cashsaving.models.User> user = this.userRepository.findByUsername(usernameOrEmail);
+                Optional<by.sivko.cashsaving.models.User> user = userService.findByUsername(usernameOrEmail);
                 if (user.isPresent()) return user.get();
-                user = this.userRepository.findByEmail(usernameOrEmail);
+                user = this.userService.findByEmail(usernameOrEmail);
                 if (!user.isPresent()) throw new UsernameNotFoundException(usernameOrEmail);
                 return user.get();
             }
@@ -115,10 +121,8 @@ public class WebSecurityConfig {
 
         @Override
         protected void configure(HttpSecurity http) throws Exception {
+            //@formatter:off
             http
-                    .csrf()
-                    .csrfTokenRepository(CookieCsrfTokenRepository.withHttpOnlyFalse())
-                    .and()
                     .headers()
                     .frameOptions()
                     .sameOrigin()
@@ -126,11 +130,13 @@ public class WebSecurityConfig {
                     .authorizeRequests()
                     .antMatchers(UNAUTHORIZED_RESOURCE_LIST)
                     .permitAll()
-                    .antMatchers("/home", "/user")
-                    .access("hasRole('USER')")
-                    .antMatchers("/admin")
-                    .access("hasRole('ADMIN')")
-                    .antMatchers("/superadmin").access("hasRole('SUPERADMIN')")
+                    .anyRequest()
+                    .authenticated()
+                    .and()
+                    .formLogin()
+                    .loginPage("/login")
+                    //.successHandler((request, response, authentication) -> response.sendRedirect(authentication.getName()))
+                    .permitAll()
                     .and()
                     .headers()
                     .cacheControl()
@@ -138,16 +144,54 @@ public class WebSecurityConfig {
                     .frameOptions()
                     .deny()
                     .and()
-                    .formLogin()
-                    .loginPage("/login")
-                    .permitAll()
-                    .and()
                     .exceptionHandling()
                     .accessDeniedPage("/access?error")
                     .and()
                     .logout()
                     .logoutRequestMatcher(new AntPathRequestMatcher("/logout"))
-                    .logoutSuccessUrl("/?logout");
+                    .logoutSuccessUrl("/?logout")
+                    .and()
+                    .sessionManagement()
+                    .maximumSessions(1)
+                    .expiredUrl("/login?expired");
+            // @formatter:on
+//            http
+//                    .csrf()
+//                    .csrfTokenRepository(CookieCsrfTokenRepository.withHttpOnlyFalse())
+//                    .and()
+//                    .headers()
+//                    .frameOptions()
+//                    .sameOrigin()
+//                    .and()
+//                    .authorizeRequests()
+//                    .antMatchers(UNAUTHORIZED_RESOURCE_LIST)
+//                    .permitAll()
+//                    .and()
+//                    .authorizeRequests()
+//                    .antMatchers(UNSECURED_RESOURCE_LIST)
+//                    .permitAll()
+//                    .and()
+//                    .authorizeRequests()
+//                    .antMatchers("/home*")
+//                    .hasRole("USER")
+//                    .and()
+//                    .headers()
+//                    .cacheControl()
+//                    .and()
+//                    .frameOptions()
+//                    .deny()
+//                    .and()
+//                    .formLogin()
+//                    .loginPage("/login")
+//                    .defaultSuccessUrl("/home", true)
+//                    .permitAll()
+//                    .and()
+//                    .exceptionHandling()
+//                    .accessDeniedPage("/access?error")
+//                    .and()
+//                    .logout()
+//                    .logoutRequestMatcher(new AntPathRequestMatcher("/logout"))
+//                    .logoutSuccessUrl("/?logout");
         }
     }
 
@@ -189,13 +233,12 @@ public class WebSecurityConfig {
                     .authorizeRequests()
                     .antMatchers(UNAUTHORIZED_RESOURCE_LIST)
                     .permitAll()
-                    .antMatchers("/git", "/manage", "/manage/**")
-                    .permitAll()
                     .anyRequest()
                     .authenticated()
                     .and()
                     .formLogin()
                     .loginPage("/login")
+                    //.successHandler((request, response, authentication) -> response.sendRedirect(authentication.getName()))
                     .permitAll()
                     .and()
                     .headers()
@@ -219,7 +262,6 @@ public class WebSecurityConfig {
     }
 
     @Bean
-    @Autowired
     public DaoAuthenticationProvider authenticationProvider(UserDetailsService userDetailsService) {
         DaoAuthenticationProvider authProvider = new DaoAuthenticationProvider();
         authProvider.setUserDetailsService(userDetailsService);

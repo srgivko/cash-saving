@@ -1,70 +1,65 @@
 package by.sivko.cashsaving.controllers;
 
+import by.sivko.cashsaving.models.Category;
+import by.sivko.cashsaving.models.Event;
+import by.sivko.cashsaving.services.CategoryService;
+import by.sivko.cashsaving.services.EventService;
+import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.SessionAttributes;
+
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpSession;
+
+@Controller
+@SessionAttributes("event")
 public class EventController {
 
-   /* private final CategoryService categoryService;
+    private final CategoryService categoryService;
 
     private final EventService eventService;
 
-    @Autowired
     public EventController(CategoryService categoryService, EventService eventService) {
         this.categoryService = categoryService;
         this.eventService = eventService;
     }
 
-    @RequestMapping(value = "/create", method = RequestMethod.GET)
-    public ModelAndView showCreateEventPage(@AuthenticationPrincipal PdfUserDetails pdfUserDetails) {
-        EventDto eventDto = new EventDto();
-        ModelAndView modelAndView = new ModelAndView();
-        modelAndView.addObject("types", Event.Type.values());
-        modelAndView.addObject("categories", this.categoryService.getAllCategoriesByUserId(pdfUserDetails.getId()));
-        modelAndView.addObject("event", eventDto);
-        modelAndView.setViewName("createOrUpdateEventJspPage");
-        return modelAndView;
-    }
-
-    @RequestMapping(value = "/create", method = RequestMethod.POST)
-    public ModelAndView createEventPage(@ModelAttribute("event") @Valid EventDto eventDto, BindingResult bindingResult) {
-        ModelAndView modelAndView;
-        if (bindingResult.hasErrors()) {
-            modelAndView = new ModelAndView();
-            modelAndView.setViewName("createOrUpdateEventJspPage");
-        } else {
-            Category category = this.categoryService.getCategoryById(eventDto.getCategory());
-            Event event = ConvertorUtil.createEventFromEventDto(new Event(), eventDto);
+    @RequestMapping(value = {"/category/{categoryId}/event/add", "/category/*/event/{eventId}/edit"}, method = RequestMethod.GET)
+    public String showEventPage(@PathVariable(required = false) Long categoryId, @PathVariable(required = false) Long eventId, Model model, HttpServletRequest httpServletRequest, HttpSession httpSession) {
+        Event event;
+        if (eventId == null) {
+            Category category = this.categoryService.getCategoryById(categoryId).orElseThrow(RuntimeException::new);
+            event = new Event();
             category.addEvent(event);
-            this.eventService.addEvent(event);
-            modelAndView = new ModelAndView("redirect:/home");
+        } else {
+            event = this.eventService.getEventById(eventId).orElseThrow(RuntimeException::new);
         }
-        return modelAndView;
+        httpSession.setAttribute("backUrl", httpServletRequest.getHeader("Referer"));
+        model.addAttribute("event", event);
+        model.addAttribute("eventTypes", Event.Type.values());
+        return "eventForm";
     }
 
-    @RequestMapping(value = "/edit/{id}", method = RequestMethod.GET)
-    public ModelAndView showEditEventPage(@AuthenticationPrincipal PdfUserDetails pdfUserDetails, @PathVariable long id) {
-        Event event = this.eventService.getEventById(id);
-        ModelAndView modelAndView = new ModelAndView();
-        List<Category> categories = this.categoryService.getAllCategoriesByUserId(pdfUserDetails.getId());
-        EventDto eventDto = ConvertorUtil.createEventDtoFromEvent(event);
-        modelAndView.addObject("types", Event.Type.values());
-        modelAndView.addObject("categories", categories);
-        modelAndView.addObject("event", eventDto);
-        modelAndView.setViewName("createOrUpdateEventJspPage");
-        return modelAndView;
+    @RequestMapping(value = "/category/*/event/add", method = RequestMethod.POST)
+    public String addEvent(Event event, HttpSession httpSession) {
+        this.eventService.addEvent(event);
+        return String.format("redirect:%s", httpSession.getAttribute("backUrl"));
     }
 
-    @RequestMapping(value = "/edit", method = RequestMethod.POST)
-    public ModelAndView editEvent(@ModelAttribute("event") EventDto eventDto) {
-        Event event = ConvertorUtil.createEventFromEventDto(this.eventService.getEventById(eventDto.getId()), eventDto);
-        Category newEventCategory = this.categoryService.getCategoryById(eventDto.getCategory());
-        newEventCategory.addEvent(event);
-        this.eventService.updateEvent(event);
-        return new ModelAndView("redirect:/home");
+    @RequestMapping(value = "/category/*/event/*/edit", method = RequestMethod.POST)
+    public String editEvent(Event event, HttpSession httpSession) {
+        this.eventService.addEvent(event);
+        return String.format("redirect:%s", httpSession.getAttribute("backUrl"));
     }
 
-    @RequestMapping(value = "/remove/{id}", method = RequestMethod.GET)
-    public ModelAndView removeEvent(@PathVariable long id) {
-        this.eventService.removeEventById(id);
-        return new ModelAndView("redirect:/home");
-    }*/
-
+    @RequestMapping(value = "/category/*/event/{eventId}/delete", method = RequestMethod.GET)
+    public String removeEventById(@PathVariable Long eventId, HttpServletRequest httpServletRequest) {
+        Event event = this.eventService.getEventById(eventId).orElseThrow(RuntimeException::new);
+        event.getCategory().removeEvent(event);
+        this.eventService.removeEvent(event);
+        return String.format("redirect:%s", httpServletRequest.getHeader("Referer"));
+    }
 }

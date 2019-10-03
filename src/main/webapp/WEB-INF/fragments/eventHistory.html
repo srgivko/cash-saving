@@ -1,0 +1,69 @@
+<div class="table" xmlns:th="http://www.thymeleaf.org">
+    <table id="eventHistory" class="display">
+        <caption>Event history</caption>
+        <thead>
+        <tr>
+            <th>Date</th>
+            <th>Name</th>
+            <th>Description</th>
+            <th>Type</th>
+            <th>Amount</th>
+            <th>Category Name</th>
+            <th>Edit Event</th>
+            <th>Remove Event</th>
+        </tr>
+        </thead>
+        <tbody>
+        <!--/*@thymesVar id="eventHistory" type="java.util.Collection<by.sivko.cashsaving.models.Event>"*/-->
+        <tr th:classappend="${event.type.name()=='INCOME'? 'bg-success' : 'bg-warning'}"
+            th:each="event : ${eventHistory}">
+            <th scope="row" th:text="${event.createAt}">Date</th>
+            <td th:text="${event.name}">Name</td>
+            <td th:text="${#strings.substring(event.description,0,6)+'...'}">Description</td>
+            <td th:text="${event.type.name()}">Type</td>
+            <td th:text="${event.amount}">Amount</td>
+            <td th:text="${event.category.name}">Category Name</td>
+            <td><a class="btn btn-primary" href="#" role="button"
+                   th:href="@{|/category/${event.category.id}/event/${event.id}/edit'|}">Edit</a></td>
+            <td><a class="btn btn-danger" href="#" role="button"
+                   th:href="@{|/category/${event.category.id}/event/${event.id}/delete|}">Delete</a></td>
+        </tr>
+        <tfoot>
+        <tr>
+            <th>Date</th>
+            <th>Name</th>
+            <th>Description</th>
+            <th>Type</th>
+            <th>Amount</th>
+            <th>Category Name</th>
+            <th th:hidden="true">Edit</th>
+            <th th:hidden="true">Remove</th>
+        </tr>
+        </tfoot>
+        </tbody>
+    </table>
+    <script th:inline="javascript">
+        $(document).ready(function () {
+            'use strict'
+            // Setup - add a text input to each footer cell
+            $('#eventHistory tfoot th').each(function () {
+                var title = $(this).text();
+                $(this).html('<input type="text" placeholder="Search ' + title + '" />');
+            });
+            // DataTable
+            var table = $('#eventHistory').DataTable();
+
+            table.columns().every(function () {
+                var that = this;
+
+                $('input', this.footer()).on('keyup change clear', function () {
+                    if (that.search() !== this.value) {
+                        that
+                            .search(this.value)
+                            .draw();
+                    }
+                });
+            });
+        });
+    </script>
+</div>

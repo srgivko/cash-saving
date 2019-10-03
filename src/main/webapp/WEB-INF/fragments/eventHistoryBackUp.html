@@ -1,0 +1,30 @@
+<table id="eventHistory" class="table table-responsive" xmlns:th="http://www.thymeleaf.org">
+    <caption>Event history</caption>
+    <thead class="thead-dark">
+    <tr>
+        <th>Date</th>
+        <th>Name</th>
+        <th>Description</th>
+        <th>Type</th>
+        <th>Amount</th>
+        <th>Category Name</th>
+        <th>Remove Event</th>
+    </tr>
+    </thead>
+    <tbody>
+    <!--/*@thymesVar id="eventHistory" type="java.util.Collection<by.sivko.cashsaving.models.Event>"*/-->
+    <tr th:classappend="${event.type.name()=='INCOME'? 'bg-success' : 'bg-danger'}"
+        th:each="event : ${eventHistory}"
+        th:onclick="|window.location.href='/update?server=${key}'|">
+        <!--th:onclick=|document.location.href='@{/category/${event.category.id}/event/${event.id}/edit}'|"-->
+        <th scope="row" th:text="${#dates.format(event.createAt,'dd-MM-yyyy')}">Date</th>
+        <td th:text="${event.name}">Name</td>
+        <td th:text="${#strings.substring(event.description,0,20)}+'..'">Description</td>
+        <td th:text="${event.type.name()}">Type</td>
+        <td th:text="${event.amount}">Amount</td>
+        <td th:text="${event.category.name}">Category Name</td>
+        <td><a class="btn btn-danger" href="#" role="button"
+               th:href="@{|/category/${event.category.id}/event/${event.id}/delete|}">Delete</a></td>
+    </tr>
+    </tbody>
+</table>

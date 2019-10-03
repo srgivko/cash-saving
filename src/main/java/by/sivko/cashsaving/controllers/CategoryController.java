@@ -1,13 +1,22 @@
 package by.sivko.cashsaving.controllers;
 
+import by.sivko.cashsaving.models.Category;
+import by.sivko.cashsaving.models.User;
+import by.sivko.cashsaving.services.CategoryService;
+import by.sivko.cashsaving.services.UserService;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.ui.Model;
+import org.springframework.web.bind.annotation.*;
+
+import java.security.Principal;
 
 @Controller
-@RequestMapping("/categories")
+@RequestMapping("/category")
+@SessionAttributes("category")
 public class CategoryController {
 
-/*    private final CategoryService categoryService;
+    private final CategoryService categoryService;
 
     private final UserService userService;
 
@@ -17,52 +26,33 @@ public class CategoryController {
         this.userService = userService;
     }
 
-    @RequestMapping(value = "/create", method = RequestMethod.POST)
-    public ModelAndView createCategory(@ModelAttribute("category") @Valid CategoryDto categoryDto, BindingResult bindingResult, Principal principal) {
-        ModelAndView modelAndView;
-        if (bindingResult.hasErrors()) {
-            modelAndView = new ModelAndView();
-            modelAndView.setViewName("createCategoryJspPage");
-        } else {
-            User user = this.userService.findByUsername(principal.getName()).orElseThrow(NotFoundEntityException::new);
-            Category category = ConvertorUtil.createCategoryFromCategoryDto(new Category(), categoryDto);
+    @RequestMapping(value = {"/add", "/{categoryId}/edit"}, method = RequestMethod.GET)
+    public String showCategoryPage(Principal principal, Model model, @PathVariable(required = false) Long categoryId) {
+        Category category;
+        if (categoryId == null) {
+            User user = this.userService.findByUsername(principal.getName()).orElseThrow(RuntimeException::new);
+            category = new Category();
             user.addCategory(category);
-            this.categoryService.addCategory(category);
-            modelAndView = new ModelAndView("redirect:/home");
+        } else {
+            category = this.categoryService.getCategoryById(categoryId).orElseThrow(RuntimeException::new);
         }
-        return modelAndView;
+        model.addAttribute("category", category);
+        model.addAttribute("eventHistory", category.getEventList());
+        return "categoryForm";
     }
 
-    @RequestMapping(value = "/create", method = RequestMethod.GET)
-    public ModelAndView showCreateCategoryPage() {
-        ModelAndView modelAndView = new ModelAndView();
-        CategoryDto categoryDto = new CategoryDto();
-        modelAndView.addObject("category", categoryDto);
-        modelAndView.setViewName("createOrUpdateCategoryJspPage");
-        return modelAndView;
+    @RequestMapping(value = {"/add", "/{categoryId}/edit"}, method = RequestMethod.POST)
+    public String addCategory(@ModelAttribute Category category, @PathVariable(required = false) String categoryId) {
+        this.categoryService.addCategory(category);
+        return "redirect:/";
     }
 
-    @RequestMapping(value = "/edit/{id}", method = RequestMethod.GET)
-    public ModelAndView showEditCategoryJspPage(@PathVariable long id) {
-        Category category = this.categoryService.getCategoryById(id);
-        CategoryDto categoryDto = ConvertorUtil.createCategoryDtoFromCategory(category);
-        ModelAndView modelAndView = new ModelAndView();
-        modelAndView.addObject("category", categoryDto);
-        modelAndView.addObject("eventHistory", category.getEventList());
-        modelAndView.setViewName("createOrUpdateCategoryJspPage");
-        return modelAndView;
+    @RequestMapping(value = "/{categoryId}/delete", method = RequestMethod.GET)
+    public String removeCategory(@PathVariable Long categoryId) {
+        Category category = this.categoryService.getCategoryById(categoryId).orElseThrow(RuntimeException::new);
+        category.getUser().removeCategory(category);
+        this.categoryService.removeCategory(category);
+        return "redirect:/";
     }
 
-    @RequestMapping(value = "/edit", method = RequestMethod.POST)
-    public ModelAndView editCategory(@ModelAttribute("category") @Valid CategoryDto categoryDto) {
-        Category category = ConvertorUtil.createCategoryFromCategoryDto(this.categoryService.getCategoryById(categoryDto.getId()), categoryDto);
-        this.categoryService.updateCategory(category);
-        return new ModelAndView("redirect:/home");
-    }
-
-    @RequestMapping(value = "/remove/{id}")
-    public ModelAndView removeCategory(@PathVariable long id) {
-        this.categoryService.removeCategoryById(id);
-        return new ModelAndView("redirect:/home");
-    }*/
 }

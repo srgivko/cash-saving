@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="en">
+<head th:replace="../fragments/head">REPLACE BEFORE COMMITTING/head>
+<body>
+<div th:replace="../fragments/nav">
+    REPLACE BEFORE COMMITTING
+</div>
+<main id="main">
+    <div class="container-fluid">
+        <div class="row">
+            <div class="col-md-3">
+                <div class="form category-form">
+                    <h1 th:text="${category.id!=null} ? 'Edit Category' : 'New Category'">Category</h1>
+                    <!--/*@thymesVar id="category" type="by.sivko.cashsaving.models.Category"*/-->
+                    <form method="post" class="needs-validation" novalidate th:object="${category}"
+                          th:action="@{/category/add}">
+                        <div th:replace="../fragments/hiddenErrors">REPLACE BEFORE COMMITTING</div>
+                        <div class="form-group">
+                            <div class="control-group" th:classappend="${#fields.hasErrors('name')} ? 'error'">
+                                <label for="name">Category name</label>
+                                <input type="text" class="form-control" th:field="*{name}" placeholder="Category name"/>
+                                <label class="control-label" th:errors="*{name}">[error]</label>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <div class="control-group" th:classappend="${#fields.hasErrors('description')} ? 'error'">
+                                <label for="description">Description</label>
+                                <textarea type="text" class="form-control" th:field="*{description}"
+                                          placeholder="Description" rows="3"></textarea>
+                                <label class="control-label" th:errors="*{description}">[error]</label>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <div class="control-group" th:classappend="${#fields.hasErrors('capacity')} ? 'error'">
+                                <label for="capacity">Capacity</label>
+                                <input type="number" class="form-control" th:field="*{capacity}" placeholder="Capacity">
+                                <label class="control-label" th:errors="*{capacity}">[error]</label>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <div class="control-group" th:classappend="${#fields.hasErrors('createAt')} ? 'error'">
+                                <label for="createAt">crateAt</label>
+                                <input type="datetime-local" class="form-control" th:field="*{createAt}">
+                                <label class="control-label" th:errors="*{createAt}">[error]</label>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <button type="submit" class="btn-block btn-primary"
+                                    th:text="${category.id!=null} ? 'Edit Category' : 'Add Category'">
+                            </button>
+                        </div>
+                    </form>
+                    <a style="width: 100%; margin-bottom: 5px;" class="btn btn-success" role="button" th:if="${category.id!=null}"
+                       th:href="@{|/category/${category.id}/event/add|}">Add new Event</a>
+                </div>
+            </div>
+            <div class="col-md-9" th:include="../fragments/eventHistory" th:if="${eventHistory!=null && !eventHistory.isEmpty()}">REPLACE BEFORE COMMITTING</div>
+        </div>
+    </div>
+</main>
+<footer th:replace="../fragments/footer" class="footer">REPLACE BEFORE COMMITTING</footer>
+</body>
+</html>

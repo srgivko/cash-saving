@@ -1,6 +1,7 @@
 package by.sivko.cashsaving.models;
 
 import lombok.*;
+import org.springframework.format.annotation.DateTimeFormat;
 
 import javax.persistence.*;
 import javax.validation.constraints.NotEmpty;
@@ -39,6 +40,7 @@ public class Event extends BaseEntity {
     @Column
     @NotNull
     @Temporal(TemporalType.TIMESTAMP)
+    @DateTimeFormat(pattern="yyyy-MM-dd'T'HH:mm")
     private Date createAt = new Date();
 
     @ManyToOne

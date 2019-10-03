@@ -1,51 +1,45 @@
 package by.sivko.cashsaving.controllers;
 
+import by.sivko.cashsaving.models.AuthorityType;
+import by.sivko.cashsaving.models.User;
+import by.sivko.cashsaving.repositories.AuthorityRepository;
+import by.sivko.cashsaving.repositories.UserRepository;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.SessionAttributes;
 
 @Controller
+@SessionAttributes("user")
 public class RegistrationController {
 
-   /* private final UserService userService;
+    private final UserRepository userRepository;
+
+    private final PasswordEncoder passwordEncoder;
+
+    private final AuthorityRepository authorityRepository;
 
     @Autowired
-    public RegistrationController(UserService userService) {
-        this.userService = userService;
+    public RegistrationController(UserRepository userRepository, PasswordEncoder passwordEncoder, AuthorityRepository authorityRepository) {
+        this.userRepository = userRepository;
+        this.passwordEncoder = passwordEncoder;
+        this.authorityRepository = authorityRepository;
     }
 
     @RequestMapping(value = "/registration", method = RequestMethod.GET)
-    public ModelAndView registration() {
-        ModelAndView modelAndView = new ModelAndView();
-        RegistrationUserDto user = new RegistrationUserDto();
-        modelAndView.addObject("user", user);
-        modelAndView.setViewName("registrationJspPage");
-        return modelAndView;
+    public String showRegistrationPage(Model model) {
+        model.addAttribute("user", new User());
+        return "registration";
     }
 
     @RequestMapping(value = "/registration", method = RequestMethod.POST)
-    public ModelAndView createNewUser(@ModelAttribute("user") @Valid RegistrationUserDto userDto, BindingResult bindingResult) {
-
-        if (userService.findByEmail(userDto.getEmail()).isPresent()) {
-            bindingResult
-                    .rejectValue("email", "error.user",
-                            "There is already a user registered with the email provided");
-        }
-        if (userService.findByUsername(userDto.getUsername()).isPresent()) {
-            bindingResult
-                    .rejectValue("username", "error.user",
-                            "There is already a user registered with the username provided");
-        }
-
-        ModelAndView modelAndView = new ModelAndView();
-
-        if (bindingResult.hasErrors()) {
-            modelAndView.setViewName("registrationJspPage");
-        } else {
-            User user = ConvertorUtil.createUserFromRegistrationUserDto(userDto);
-            userService.addUser(user);
-            modelAndView.addObject("successMessage", "User has been registered successfully");
-            modelAndView.addObject("user", new User());
-            modelAndView.setViewName("registrationJspPage");
-        }
-        return modelAndView;
-    }*/
+    public String registrationUser(User user) {
+        user.setPassword(this.passwordEncoder.encode(user.getPassword()));
+        user.addAuthority(this.authorityRepository.findByType(AuthorityType.ROLE_USER));
+        this.userRepository.save(user);
+        return "redirect:/login";
+    }
 }

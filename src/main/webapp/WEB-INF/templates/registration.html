@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="en">
+<head th:replace="../fragments/head">REPLACE BEFORE COMMITTING</head>
+<body>
+<br>
+<div class="form form-sign-up">
+    <h1>Sign-up</h1>
+    <!--/*@thymesVar id="user" type="by.sivko.cashsaving.models.User"*/-->
+    <form th:object="${user}" class="needs-validation" action="" novalidate method="post" th:action="@{/registration}">
+        <div th:replace="../fragments/hiddenErrors">REPLACE BEFORE COMMITTING</div>
+        <div class="form-group">
+            <div class="control-group" th:classappend="${#fields.hasErrors('username')} ? 'error'">
+                <label for="username">Username</label>
+                <input type="text" class="form-control" th:field="*{username}" placeholder="Enter username"/>
+                <label class="control-label" th:errors="*{username}">[error]</label>
+            </div>
+        </div>
+        <div class="form-group">
+            <div class="control-group" th:classappend="${#fields.hasErrors('email')} ? 'error'">
+                <label for="email">Email</label>
+                <input type="email" class="form-control" th:field="*{email}" placeholder="Email password"/>
+                <label class="control-label" th:errors="*{email}">[error]</label>
+            </div>
+        </div>
+        <div class="form-group">
+            <div class="control-group" th:classappend="${#fields.hasErrors('password')} ? 'error'">
+                <label for="password">Password</label>
+                <input type="password" class="form-control" th:field="*{password}" placeholder="Enter password"/>
+                <label class="control-label" th:errors="*{password}">[error]</label>
+            </div>
+        </div>
+        <div class="form-group">
+            <div class="control-group" th:classappend="${#fields.hasErrors('verifyPassword')} ? 'error'">
+                <label for="verifyPassword">Verify password</label>
+                <input type="password" class="form-control" th:field="*{verifyPassword}" placeholder="Confirm password"
+                       oninput='verifyPassword.setCustomValidity(password.value !== verifyPassword.value ? "Passwords do not match." : "")'/>
+                <label class="control-label" th:errors="*{verifyPassword}">[error]</label>
+            </div>
+        </div>
+        <div class="form-group">
+            <button type="submit" class="btn-block btn-primary">Sign-up</button>
+        </div>
+    </form>
+    <script src="../../resources/js/validationForm.js" th:src="@{/resources/js/validationForm.js}"></script>
+</div>
+<footer th:replace="../fragments/footer" class="footer">REPLACE BEFORE COMMITTING</footer>
+</body>
+</html>

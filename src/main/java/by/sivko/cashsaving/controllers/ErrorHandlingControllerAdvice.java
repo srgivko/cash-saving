@@ -5,6 +5,7 @@ import org.springframework.web.bind.annotation.ControllerAdvice;
 @ControllerAdvice
 class ErrorHandlingControllerAdvice {
 
+
 /*    @ExceptionHandler(ConstraintViolationException.class)
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     @ResponseBody

@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      lang="en">
+<head th:replace="../fragments/head">REPLACE BEFORE COMMITTING</head>
+<body>
+<div th:replace="../fragments/nav">
+    REPLACE BEFORE COMMITTING
+</div>
+<main id="main">
+    <div id="fullpage">
+        <div class="section" th:include="../fragments/categories"
+             th:if="${categories!=null && !categories.isEmpty()}"
+             data-anchor="categories">
+            REPLACE BEFORE COMMITTING
+        </div>
+        <div class="section" th:include="../fragments/eventHistory"
+             th:if="${eventHistory!=null && !eventHistory.isEmpty()}"
+             data-anchor="events">
+            REPLACE BEFORE COMMITTING
+        </div>
+        <div class="section" data-anchor="stats">
+            REPLACE BEFORE COMMITTING
+        </div>
+    </div>
+    <script th:inline="javascript">
+        $(document).ready(function () {
+            var myFullpage = new fullpage('#fullpage', {
+                anchors: ['categories', 'events', 'stats'],
+                sectionsColor: ['#C63D0F', '#1BBC9B', '#A23D0A'],
+                navigation: true,
+                navigationPosition: 'right',
+                navigationTooltips: ['Categories', 'Event History', 'Statistics']
+            });
+
+        });
+    </script>
+</main>
+<footer th:replace="../fragments/footer" class="footer">REPLACE BEFORE COMMITTING</footer>
+</body>
+</html>

@@ -1,6 +1,7 @@
 package by.sivko.cashsaving.models;
 
 import lombok.*;
+import org.springframework.format.annotation.DateTimeFormat;
 
 import javax.persistence.*;
 import javax.validation.constraints.NotEmpty;
@@ -9,12 +10,11 @@ import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
-import java.util.Optional;
 
 
 @Data
-@EqualsAndHashCode(callSuper = true)
-@ToString(exclude = {"user", "eventList"})
+@EqualsAndHashCode(callSuper = true, exclude = {"user", "categoryStat"})
+@ToString(exclude = {"user", "eventList", "categoryStat"})
 @NoArgsConstructor
 @AllArgsConstructor
 @Entity
@@ -24,7 +24,6 @@ import java.util.Optional;
         @NamedQuery(name = "Category.getAllCategoriesByUserName", query = "select c from Category c where c.user.username = :username")
 })
 public class Category extends BaseEntity {
-
 
     private static final long serialVersionUID = -1088780004560221054L;
 
@@ -43,6 +42,7 @@ public class Category extends BaseEntity {
     @Column
     @NotNull
     @Temporal(TemporalType.TIMESTAMP)
+    @DateTimeFormat(pattern = "yyyy-MM-dd'T'HH:mm")
     private Date createAt = new Date();
 
     @ManyToOne
@@ -51,6 +51,9 @@ public class Category extends BaseEntity {
     @OneToMany(mappedBy = "category", cascade = CascadeType.ALL, targetEntity = Event.class,
             fetch = FetchType.EAGER)
     private List<Event> eventList = new ArrayList<>();
+
+    @Transient
+    private CategoryStat categoryStat;
 
     public void addEvent(Event event) {
         this.eventList.add(event);
@@ -62,10 +65,19 @@ public class Category extends BaseEntity {
         event.setCategory(null);
     }
 
-    public BigDecimal calculateCashEvents() {
-        Optional<BigDecimal> sum = this.eventList.stream()
-                .map(event -> event.getType() == Event.Type.INCOME ? event.getAmount() : event.getAmount().negate())
-                .reduce(BigDecimal::add);
-        return sum.orElse(BigDecimal.ZERO);
+    public CategoryStat getCategoryStat() {
+        if (this.categoryStat == null) {
+            CategoryStat categoryStat = new CategoryStat();
+            this.eventList.forEach(event -> {
+                    if (event.getType() == Event.Type.INCOME) {
+                    categoryStat.addToIncome(event.getAmount());
+                } else {
+                    categoryStat.addToOutcome(event.getAmount());
+                }
+            });
+            this.categoryStat = categoryStat;
+        }
+        return this.categoryStat;
     }
+
 }

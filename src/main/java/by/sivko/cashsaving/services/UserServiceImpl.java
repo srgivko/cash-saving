@@ -59,7 +59,7 @@ public class UserServiceImpl implements UserService {
         return this.userRepository.findByEmail(email);
     }
 
-    @Transactional(readOnly = true)
+    @Transactional
     @Override
     public Optional<User> findByUsername(String username) {
         return this.userRepository.findByUsername(username);

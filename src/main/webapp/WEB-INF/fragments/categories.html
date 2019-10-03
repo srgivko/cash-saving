@@ -1,0 +1,55 @@
+<div class="table" xmlns:th="http://www.thymeleaf.org">
+    <table id="categories" class="display">
+        <caption>Categories</caption>
+        <thead>
+        <tr>
+            <th>Name</th>
+            <th>Description</th>
+            <th>CreateAt</th>
+            <th>Capacity</th>
+            <th>Total INCOME</th>
+            <th>Total OUTCOME</th>
+            <th>Total</th>
+            <th>Edit Category</th>
+            <th>Remove Category</th>
+            <th>Add Event</th>
+        </tr>
+        </thead>
+        <tbody>
+        <!--/*@thymesVar id="categories" type="java.util.Collection<by.sivko.cashsaving.models.Category>"*/-->
+        <!--/*@thymesVar id="category" type="by.sivko.cashsaving.models.Category"*/-->
+        <tr th:each="category : ${categories}">
+            <th scope="row" th:text="${category.name}">Name</th>
+            <td th:text="${#strings.substring(category.description,0,6)+'...'}">Description</td>
+            <td th:text="${#dates.format(category.createAt,'dd-MM-yyyy')}">CreateAt</td>
+            <td th:text="${category.capacity}">Capacity</td>
+            <td class="bg-success" th:text="${category.categoryStat.income}">Total INCOME</td>
+            <td class="bg-danger" th:text="${category.categoryStat.outcome}">Total OUTCOME</td>
+            <td th:text="${category.categoryStat.getTotal()}">Total</td>
+            <td><a class="btn btn-primary" href="#" role="button"
+                   th:href="@{|/category/${category.id}/edit|}">Edit</a></td>
+            <td><a class="btn btn-danger" href="#" role="button"
+                   th:href="@{|/category/${category.id}/delete|}">Delete</a></td>
+            <td><a class="btn btn-warning" href="#" role="button"
+                   th:href="@{|/category/${category.id}/event/add|}">Add event</a></td>
+        </tr>
+        </tbody>
+    </table>
+    <script th:inline="javascript">
+        $(document).ready(function () {
+            'use strict'
+            // DataTable
+            var table = $('#categories').DataTable();
+
+            $('categories tbody').on( 'click', 'tr', function () {
+                if ( $(this).hasClass('selected') ) {
+                    $(this).removeClass('selected');
+                }
+                else {
+                    table.$('tr.selected').removeClass('selected');
+                    $(this).addClass('selected');
+                }
+            } );
+        });
+    </script>
+</div>
