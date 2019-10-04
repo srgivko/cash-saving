@@ -1,0 +1,111 @@
+<div class="chart container-fluid" xmlns:th="http://www.thymeleaf.org">
+    <div class="row">
+        <col-md-4>
+            <button class="chart-button">DAY</button>
+        </col-md-4>
+        <col-md-4>
+            <button class="chart-button">MONTH</button>
+        </col-md-4>
+        <col-md-4>
+            <button class="chart-button">YEAR</button>
+        </col-md-4>
+    </div>
+    <div class="row">
+        <div class="col-md-6">
+            <canvas id="chart1"></canvas>
+        </div>
+        <div class="col-md-6">
+            <canvas id="chart2"></canvas>
+        </div>
+        <script th:inline="javascript">
+            $(function () {
+                    'use strict';
+                    charIt('DAY');
+
+                    async function charIt(period) {
+                        const data = await getData(period);
+                        const ctx1 = document.getElementById('chart1').getContext('2d');
+                        const ctx2 = document.getElementById('chart2').getContext('2d');
+                        const chart1 = new Chart(ctx1, {
+                            type: 'line',
+                            data: {
+                                labels: data.labels,
+                                datasets: [{
+                                    label: 'Outcome',
+                                    data: data.dataOutcome,
+                                    backgroundColor: 'rgba(255, 99, 132, 0.2)',
+                                    borderColor: 'rgba(255, 99, 132, 1)',
+                                    borderWidth: 1,
+                                    fill: true,
+                                    lineTension: 0.4
+                                }, {
+                                    label: 'Income',
+                                    data: data.dataIncome,
+                                    backgroundColor: 'rgba(99, 255, 132, 0.2)',
+                                    borderColor: 'rgba(99, 255, 13, 1)',
+                                    borderWidth: 1,
+                                    fill: true,
+                                    lineTension: 0.4
+                                },
+                                    {
+                                        label: 'Profit',
+                                        data: data.dataProfit,
+                                        backgroundColor: 'rgba(132, 99, 255, 0.2)',
+                                        borderColor: 'rgba(132, 99, 255, 1)',
+                                        borderWidth: 1,
+                                        fill: true,
+                                        lineTension: 0.4
+                                    }]
+                            },
+                            options: {
+                                scales: {
+                                    yAxes: [{
+                                        ticks: {
+                                            beginAtZero: true
+                                        }
+                                    }]
+                                }
+                            }
+                        });
+                        const chart2 = new Chart(ctx2, {
+                            type: 'pie',
+                            data: {
+                                labels: ['INCOME', 'OUTCOME'],
+                                datasets: [{
+                                    backgroundColor: ['rgba(99, 255, 132, 0.8)',
+                                        'rgba(255, 99, 132, 0.8)'],
+                                    data: [data.totalIncome, data.totalOutcome]
+                                }]
+                            }
+                        });
+                    }
+
+                    async function getData(period) {
+                        const params = {
+                            period: period,
+                            categoryId: [[${category != null && category.id !=null ? category.id : ''}]],
+                        };
+                        const query = Object.keys(params)
+                            .map(k => encodeURIComponent(k) + '=' + encodeURIComponent(params[k]))
+                            .join('&');
+                        const url = '/api/chart?' + query;
+                        //const response = await fetch('/api/chart', params);
+                        const response = await fetch(url);
+                        return await response.json();
+                    }
+
+                    (function () {
+                        const periods = ['DAY', 'MONTH', 'YEAR'];
+                        $('.chart-button').each((index, element) => {
+                            element.addEventListener('click', () => {
+                                charIt(periods[index]);
+                            })
+                        })
+                    })();
+
+
+                }
+            );
+        </script>
+    </div>
+</div>

@@ -85,6 +85,7 @@ table a.btn {
     caption-side: top;
     text-align: center;
     font-size: 2em;
+    color: aliceblue;
 }
 
 tfoot input {
@@ -95,4 +96,8 @@ tfoot input {
 
 nav {
     z-index: 1;
+}
+
+canvas {
+    background-color: #f3f3f3;
 }

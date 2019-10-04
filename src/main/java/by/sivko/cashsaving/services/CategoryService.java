@@ -7,18 +7,13 @@ import java.util.Date;
 import java.util.Optional;
 
 public interface CategoryService {
-    Category addCategory(Category category);
-
-    void removeCategory(Category category);
-
+    Category addCategory(Category category, String username);
 
     Optional<Category> getCategoryById(Long id);
 
     void removeCategoryById(Long id);
 
-    Collection<Category> getAllCategoriesByUserId(Long userId);
-
-    abstract Collection<Category> getAllCategoriesByUserUsername(String username);
+    Collection<Category> getAllCategoriesByUserUsername(String username);
 
     Collection<Category> getAllCategoriesByNameLike(String name);
 

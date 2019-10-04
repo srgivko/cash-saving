@@ -57,6 +57,9 @@
             <div class="col-md-9" th:include="../fragments/eventHistory" th:if="${eventHistory!=null && !eventHistory.isEmpty()}">REPLACE BEFORE COMMITTING</div>
         </div>
     </div>
+    <div class="container" th:include="../fragments/chart"  th:if="${eventHistory!=null && !eventHistory.isEmpty()}">
+        REPLACE BEFORE COMMITTING
+    </div>
 </main>
 <footer th:replace="../fragments/footer" class="footer">REPLACE BEFORE COMMITTING</footer>
 </body>

@@ -40,10 +40,11 @@ public class Event extends BaseEntity {
     @Column
     @NotNull
     @Temporal(TemporalType.TIMESTAMP)
-    @DateTimeFormat(pattern="yyyy-MM-dd'T'HH:mm")
+    @DateTimeFormat(pattern = "yyyy-MM-dd'T'HH:mm")
     private Date createAt = new Date();
 
     @ManyToOne
+    @NotNull
     private Category category;
 
     public enum Type {

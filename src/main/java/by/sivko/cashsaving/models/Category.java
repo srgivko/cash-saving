@@ -48,8 +48,7 @@ public class Category extends BaseEntity {
     @ManyToOne
     private User user;
 
-    @OneToMany(mappedBy = "category", cascade = CascadeType.ALL, targetEntity = Event.class,
-            fetch = FetchType.EAGER)
+    @OneToMany(mappedBy = "category", cascade = CascadeType.ALL, fetch = FetchType.EAGER)
     private List<Event> eventList = new ArrayList<>();
 
     @Transient
@@ -69,7 +68,7 @@ public class Category extends BaseEntity {
         if (this.categoryStat == null) {
             CategoryStat categoryStat = new CategoryStat();
             this.eventList.forEach(event -> {
-                    if (event.getType() == Event.Type.INCOME) {
+                if (event.getType() == Event.Type.INCOME) {
                     categoryStat.addToIncome(event.getAmount());
                 } else {
                     categoryStat.addToOutcome(event.getAmount());

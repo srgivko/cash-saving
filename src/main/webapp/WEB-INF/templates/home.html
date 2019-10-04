@@ -10,28 +10,27 @@
     <div id="fullpage">
         <div class="section" th:include="../fragments/categories"
              th:if="${categories!=null && !categories.isEmpty()}"
-             data-anchor="categories">
+             data-anchor="categoriesPage">
             REPLACE BEFORE COMMITTING
         </div>
         <div class="section" th:include="../fragments/eventHistory"
              th:if="${eventHistory!=null && !eventHistory.isEmpty()}"
-             data-anchor="events">
+             data-anchor="eventsPage">
             REPLACE BEFORE COMMITTING
         </div>
-        <div class="section" data-anchor="stats">
+        <div class="section" th:include="../fragments/chart" data-anchor="statsPage" th:if="${eventHistory!=null && !eventHistory.isEmpty()}">
             REPLACE BEFORE COMMITTING
         </div>
     </div>
     <script th:inline="javascript">
         $(document).ready(function () {
             var myFullpage = new fullpage('#fullpage', {
-                anchors: ['categories', 'events', 'stats'],
-                sectionsColor: ['#C63D0F', '#1BBC9B', '#A23D0A'],
+                anchors: ['categoriesPage', 'eventsPage', 'statsPage'],
+                sectionsColor: ['#C63D0F', '#1BBC9B', '#A23D0A '],
                 navigation: true,
                 navigationPosition: 'right',
                 navigationTooltips: ['Categories', 'Event History', 'Statistics']
             });
-
         });
     </script>
 </main>

@@ -57,9 +57,7 @@ public class EventController {
 
     @RequestMapping(value = "/category/*/event/{eventId}/delete", method = RequestMethod.GET)
     public String removeEventById(@PathVariable Long eventId, HttpServletRequest httpServletRequest) {
-        Event event = this.eventService.getEventById(eventId).orElseThrow(RuntimeException::new);
-        event.getCategory().removeEvent(event);
-        this.eventService.removeEvent(event);
+        this.eventService.removeEventById(eventId);
         return String.format("redirect:%s", httpServletRequest.getHeader("Referer"));
     }
 }

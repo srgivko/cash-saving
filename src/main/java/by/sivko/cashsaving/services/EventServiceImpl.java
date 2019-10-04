@@ -14,19 +14,17 @@ public class EventServiceImpl implements EventService {
 
     private final EventRepository eventRepository;
 
+    private final CategoryService categoryService;
+
     @Autowired
-    public EventServiceImpl(EventRepository eventRepository) {
+    public EventServiceImpl(EventRepository eventRepository, CategoryService categoryService) {
         this.eventRepository = eventRepository;
+        this.categoryService = categoryService;
     }
 
     @Override
     public Event addEvent(Event event) {
         return this.eventRepository.save(event);
-    }
-
-    @Override
-    public void removeEvent(Event event) {
-        this.eventRepository.delete(event);
     }
 
     @Override
@@ -36,7 +34,9 @@ public class EventServiceImpl implements EventService {
 
     @Override
     public void removeEventById(Long id) {
-        this.eventRepository.deleteById(id);
+        Event event = this.getEventById(id).orElseThrow(RuntimeException::new);
+        event.getCategory().removeEvent(event);
+        this.eventRepository.delete(event);
     }
 
 }
