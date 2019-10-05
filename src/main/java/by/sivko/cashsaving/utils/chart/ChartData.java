@@ -1,4 +1,5 @@
 package by.sivko.cashsaving.utils.chart;
 
-public abstract class ChartData {
+public interface ChartData {
+    ChartData calculateData(ChartDataPeriod period);
 }

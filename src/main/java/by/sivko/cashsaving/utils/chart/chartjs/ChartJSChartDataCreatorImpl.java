@@ -1,23 +1,39 @@
 package by.sivko.cashsaving.utils.chart.chartjs;
 
 import by.sivko.cashsaving.models.Event;
+import by.sivko.cashsaving.utils.chart.ChartData;
 import by.sivko.cashsaving.utils.chart.ChartDataCreator;
 import by.sivko.cashsaving.utils.chart.ChartDataPeriod;
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import lombok.Getter;
+import lombok.Setter;
 import org.springframework.stereotype.Component;
 
 import java.math.BigDecimal;
 import java.text.DateFormat;
+import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.Comparator;
+import java.util.List;
+import java.util.stream.Stream;
 
 @Component
-public class ChartJSChartDataCreatorImpl extends ChartDataCreator<ChartJSData> {
+public class ChartJSChartDataCreatorImpl implements ChartDataCreator {
 
     @Override
-    protected ChartJSData getCreateData() {
-        return new ChartJSData();
+    public ChartJSData createChartData(Stream<Event> eventStream, ChartDataPeriod chartDataPeriod) {
+        return fillData(eventStream, chartDataPeriod);
     }
 
-    @Override
-    protected void calculateIncomeAndOutCome(DateFormat format, Event event, ChartJSData chartJSData) {
+    private ChartJSData fillData(Stream<Event> eventStream, ChartDataPeriod chartDataPeriod) {
+        ChartJSData chartJSData = new ChartJSData();
+        DateFormat format = new SimpleDateFormat("yyyy-MM-dd");
+        eventStream.sorted(Comparator.comparing(Event::getCreateAt))
+                .forEachOrdered(event -> fillIncomeAndOutcome(format, event, chartJSData));
+        return chartJSData.calculateData(chartDataPeriod);
+    }
+
+    private void fillIncomeAndOutcome(DateFormat format, Event event, ChartJSData chartJSData) {
         String stringDate = format.format(event.getCreateAt());
         int countValues = chartJSData.getLabels().size();
         if (chartJSData.getPrevDate().equals(stringDate)) {
@@ -40,44 +56,64 @@ public class ChartJSChartDataCreatorImpl extends ChartDataCreator<ChartJSData> {
         }
     }
 
-    @Override
-    protected void calculateProfit(ChartJSData chartJSData) {
-        for (int i = 0; i < chartJSData.getLabels().size(); i++) {
-            chartJSData.getDataProfit().add(chartJSData.getDataIncome().get(i).subtract(chartJSData.getDataOutcome().get(i)));
-        }
-    }
+    @Getter
+    @Setter
+    class ChartJSData implements ChartData {
 
-    @Override
-    protected void calculateByPeriod(ChartJSData chartJSData, ChartDataPeriod period) {
-        int countCutSymbol = 0;
-        switch (period) {
-            case DAY:
-                return;
-            case MONTH:
-                countCutSymbol = 8;
-                break;
-            case YEAR:
-                countCutSymbol = 5;
+        @JsonIgnore
+        private String prevDate = "";
+        private List<String> labels = new ArrayList<>();
+        private List<BigDecimal> dataIncome = new ArrayList<>();
+        private List<BigDecimal> dataOutcome = new ArrayList<>();
+        private List<BigDecimal> dataProfit = new ArrayList<>();
+        private BigDecimal totalIncome = BigDecimal.ZERO;
+        private BigDecimal totalOutcome = BigDecimal.ZERO;
+
+        @Override
+        public ChartJSData calculateData(ChartDataPeriod period) {
+            this.calculateProfit();
+            this.calculateByPeriod(period);
+            this.calculateTotalIncomeAndTotalOutcome();
+            return this;
         }
-        String remainderMonth = "";
-        for (int i = 0; i < chartJSData.getLabels().size(); i++) {
-            String yearAndMonth = chartJSData.getLabels().get(i).substring(0, countCutSymbol);
-            if (!yearAndMonth.equals(remainderMonth)) {
-                remainderMonth = yearAndMonth;
-            } else {
-                chartJSData.getDataIncome().set(i, chartJSData.getDataIncome().get(i).add(chartJSData.getDataIncome().get(i - 1)));
-                chartJSData.getDataOutcome().set(i, chartJSData.getDataOutcome().get(i).add(chartJSData.getDataOutcome().get(i - 1)));
-                chartJSData.getDataProfit().set(i, chartJSData.getDataProfit().get(i).add(chartJSData.getDataProfit().get(i - 1)));
+
+        private void calculateProfit() {
+            for (int i = 0; i < this.labels.size(); i++) {
+                this.dataProfit.add(this.dataIncome.get(i).subtract(this.getDataOutcome().get(i)));
             }
         }
-    }
 
-    @Override
-    protected void calculateTotalIncomeAndTotalOutcome(ChartJSData chartJSData) {
-        BigDecimal totalIncome = chartJSData.getDataIncome().stream().reduce(BigDecimal::add).orElse(BigDecimal.ZERO);
-        BigDecimal totalOutCome = chartJSData.getDataOutcome().stream().reduce(BigDecimal::add).orElse(BigDecimal.ZERO);
-        chartJSData.setTotalIncome(totalIncome);
-        chartJSData.setTotalOutcome(totalOutCome);
+        private void calculateByPeriod(ChartDataPeriod period) {
+            int countCutSymbol = 0;
+            switch (period) {
+                case DAY:
+                    return;
+                case MONTH:
+                    countCutSymbol = 8;
+                    break;
+                case YEAR:
+                    countCutSymbol = 5;
+            }
+            String remainderMonth = "";
+            for (int i = 0; i < this.labels.size(); i++) {
+                String yearAndMonth = this.labels.get(i).substring(0, countCutSymbol);
+                if (!yearAndMonth.equals(remainderMonth)) {
+                    remainderMonth = yearAndMonth;
+                } else {
+                    this.getDataIncome().set(i, this.getDataIncome().get(i).add(this.getDataIncome().get(i - 1)));
+                    this.getDataOutcome().set(i, this.getDataOutcome().get(i).add(this.getDataOutcome().get(i - 1)));
+                    this.getDataProfit().set(i, this.getDataProfit().get(i).add(this.getDataProfit().get(i - 1)));
+                }
+            }
+        }
+
+        private void calculateTotalIncomeAndTotalOutcome() {
+            BigDecimal totalIncome = this.getDataIncome().stream().reduce(BigDecimal::add).orElse(BigDecimal.ZERO);
+            BigDecimal totalOutCome = this.getDataOutcome().stream().reduce(BigDecimal::add).orElse(BigDecimal.ZERO);
+            this.setTotalIncome(totalIncome);
+            this.setTotalOutcome(totalOutCome);
+        }
+
     }
 }
 
