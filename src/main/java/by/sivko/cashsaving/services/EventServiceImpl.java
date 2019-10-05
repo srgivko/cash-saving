@@ -1,5 +1,6 @@
 package by.sivko.cashsaving.services;
 
+import by.sivko.cashsaving.exceptions.NotFoundEntityException;
 import by.sivko.cashsaving.models.Event;
 import by.sivko.cashsaving.repositories.EventRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -34,7 +35,7 @@ public class EventServiceImpl implements EventService {
 
     @Override
     public void removeEventById(Long id) {
-        Event event = this.getEventById(id).orElseThrow(RuntimeException::new);
+        Event event = this.getEventById(id).orElseThrow(NotFoundEntityException::new);
         event.getCategory().removeEvent(event);
         this.eventRepository.delete(event);
     }

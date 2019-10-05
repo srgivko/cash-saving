@@ -32,11 +32,11 @@ public class WebSecurityConfig {
 
     private static final String[] UNSECURED_RESOURCE_LIST = new String[]{"/resources/**"};
 
-    private static final String[] UNAUTHORIZED_RESOURCE_LIST = new String[]{ "/login*", "/registration*"};
+    private static final String[] UNAUTHORIZED_RESOURCE_LIST = new String[]{"/login*", "/registration*"};
 
     @Configuration
     @Profile({"dev"})
-    protected static class BasicUserDetailsServiceSetup  {
+    protected static class BasicUserDetailsServiceSetup {
 
         private final PasswordEncoder passwordEncoder;
 
@@ -112,7 +112,7 @@ public class WebSecurityConfig {
 
         @Override
         public void configure(WebSecurity web) {
-            //@formatter:off
+            //@formatter:of
             web
                     .ignoring()
                     .antMatchers(UNSECURED_RESOURCE_LIST);
@@ -123,75 +123,39 @@ public class WebSecurityConfig {
         protected void configure(HttpSecurity http) throws Exception {
             //@formatter:off
             http
-                    .headers()
-                    .frameOptions()
-                    .sameOrigin()
+                        .csrf()
+                    // TODO: 10/5/19 save csrf in cookie or not
+                    //save csrf in cookie file
+                   // .csrfTokenRepository(CookieCsrfTokenRepository.withHttpOnlyFalse())
                     .and()
-                    .authorizeRequests()
-                    .antMatchers(UNAUTHORIZED_RESOURCE_LIST)
-                    .permitAll()
-                    .anyRequest()
-                    .authenticated()
+                        .authorizeRequests()
+                        .antMatchers(UNAUTHORIZED_RESOURCE_LIST)
+                        .permitAll()
+                        .anyRequest()
+                        .authenticated()
                     .and()
-                    .formLogin()
-                    .loginPage("/login")
+                        .formLogin()
+                        .loginPage("/login")
                     //.successHandler((request, response, authentication) -> response.sendRedirect(authentication.getName()))
-                    .permitAll()
+                        .permitAll()
+//                    .and()
+//                            .headers()
+//                            .cacheControl()
+//                        .and()
+//                            .frameOptions()
+//                            .deny()
                     .and()
-                    .headers()
-                    .cacheControl()
+                        .exceptionHandling()
+                        .accessDeniedPage("/access?error")
                     .and()
-                    .frameOptions()
-                    .deny()
+                        .logout()
+                        .logoutRequestMatcher(new AntPathRequestMatcher("/logout"))
+                        .logoutSuccessUrl("/?logout")
                     .and()
-                    .exceptionHandling()
-                    .accessDeniedPage("/access?error")
-                    .and()
-                    .logout()
-                    .logoutRequestMatcher(new AntPathRequestMatcher("/logout"))
-                    .logoutSuccessUrl("/?logout")
-                    .and()
-                    .sessionManagement()
-                    .maximumSessions(1)
-                    .expiredUrl("/login?expired");
-            // @formatter:on
-//            http
-//                    .csrf()
-//                    .csrfTokenRepository(CookieCsrfTokenRepository.withHttpOnlyFalse())
-//                    .and()
-//                    .headers()
-//                    .frameOptions()
-//                    .sameOrigin()
-//                    .and()
-//                    .authorizeRequests()
-//                    .antMatchers(UNAUTHORIZED_RESOURCE_LIST)
-//                    .permitAll()
-//                    .and()
-//                    .authorizeRequests()
-//                    .antMatchers(UNSECURED_RESOURCE_LIST)
-//                    .permitAll()
-//                    .and()
-//                    .authorizeRequests()
-//                    .antMatchers("/home*")
-//                    .hasRole("USER")
-//                    .and()
-//                    .headers()
-//                    .cacheControl()
-//                    .and()
-//                    .frameOptions()
-//                    .deny()
-//                    .and()
-//                    .formLogin()
-//                    .loginPage("/login")
-//                    .defaultSuccessUrl("/home", true)
-//                    .permitAll()
-//                    .and()
-//                    .exceptionHandling()
-//                    .accessDeniedPage("/access?error")
-//                    .and()
-//                    .logout()
-//                    .logoutRequestMatcher(new AntPathRequestMatcher("/logout"))
-//                    .logoutSuccessUrl("/?logout");
+                        .sessionManagement()
+                        .maximumSessions(1)
+                        .expiredUrl("/login?expired");
+            //@formatter:on
         }
     }
 
@@ -227,7 +191,7 @@ public class WebSecurityConfig {
             //@formatter:off
             http
                     .headers()
-                    .frameOptions()
+                        .frameOptions()
                     .sameOrigin()
                     .and()
                     .authorizeRequests()

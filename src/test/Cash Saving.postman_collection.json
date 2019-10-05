@@ -1,0 +1,74 @@
+{
+	"variables": [],
+	"info": {
+		"name": "Cash Saving",
+		"_postman_id": "b3bd6371-6a77-2136-a3e2-b885bc15568e",
+		"description": "",
+		"schema": "https://schema.getpostman.com/json/collection/v2.0.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "Get CSRF and save in Environment from cookie",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"type": "text/javascript",
+						"exec": [
+							"//Replace XSFR-TOKEN with your cookie name",
+							"//get from cookie",
+							"// var xsrfCookie = postman.getResponseCookie(\"XSRF-TOKEN\");",
+							"// postman.setEnvironmentVariable(\"x-xsrf-token\", xsrfCookie.value);",
+							"//get from html",
+							"var _csrf_header = $(responseBody).find('meta[name=\"_csrf_header\"]').attr('content');",
+							"var _csrf_token = $(responseBody).find('meta[name=\"_csrf\"]').attr('content');",
+							"postman.setEnvironmentVariable('csrf_header', _csrf_header);",
+							"postman.setEnvironmentVariable('csrf_token', _csrf_token);"
+						]
+					}
+				}
+			],
+			"request": {
+				"url": "http://localhost:8080/login",
+				"method": "GET",
+				"header": [],
+				"body": {},
+				"description": "Get CSRF Token and save in Environment "
+			},
+			"response": []
+		},
+		{
+			"name": "Login Cash Saving",
+			"request": {
+				"url": "http://localhost:8080/login",
+				"method": "POST",
+				"header": [
+					{
+						"key": "{{csrf_header}}",
+						"value": "{{csrf_token}}",
+						"description": ""
+					}
+				],
+				"body": {
+					"mode": "urlencoded",
+					"urlencoded": [
+						{
+							"key": "username",
+							"value": "Username12@username.by",
+							"type": "text",
+							"description": ""
+						},
+						{
+							"key": "password",
+							"value": "Username12@username.by",
+							"type": "text",
+							"description": ""
+						}
+					]
+				},
+				"description": "Login"
+			},
+			"response": []
+		}
+	]
+}
