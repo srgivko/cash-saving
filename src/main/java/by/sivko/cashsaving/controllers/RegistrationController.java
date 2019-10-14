@@ -1,32 +1,26 @@
 package by.sivko.cashsaving.controllers;
 
-import by.sivko.cashsaving.models.AuthorityType;
 import by.sivko.cashsaving.models.User;
-import by.sivko.cashsaving.repositories.AuthorityRepository;
-import by.sivko.cashsaving.repositories.UserRepository;
+import by.sivko.cashsaving.models.dto.CaptchaResponseDto;
+import by.sivko.cashsaving.services.CaptchaService;
+import by.sivko.cashsaving.services.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.SessionAttributes;
+import org.springframework.web.bind.annotation.*;
 
 @Controller
 @SessionAttributes("user")
 public class RegistrationController {
 
-    private final UserRepository userRepository;
+    private final UserService userService;
 
-    private final PasswordEncoder passwordEncoder;
-
-    private final AuthorityRepository authorityRepository;
+    private final CaptchaService captchaService;
 
     @Autowired
-    public RegistrationController(UserRepository userRepository, PasswordEncoder passwordEncoder, AuthorityRepository authorityRepository) {
-        this.userRepository = userRepository;
-        this.passwordEncoder = passwordEncoder;
-        this.authorityRepository = authorityRepository;
+    public RegistrationController(UserService userService, CaptchaService captchaService) {
+        this.userService = userService;
+        this.captchaService = captchaService;
     }
 
     @RequestMapping(value = "/registration", method = RequestMethod.GET)
@@ -36,10 +30,22 @@ public class RegistrationController {
     }
 
     @RequestMapping(value = "/registration", method = RequestMethod.POST)
-    public String registrationUser(User user) {
-        user.setPassword(this.passwordEncoder.encode(user.getPassword()));
-        user.addAuthority(this.authorityRepository.findByType(AuthorityType.ROLE_USER));
-        this.userRepository.save(user);
+    public String registerUser(
+            User user,
+            @RequestParam(value = "g-recaptcha-response", defaultValue = "default") String captchaResponse
+    ) {
+        CaptchaResponseDto captchaResponseDto = this.captchaService.checkCaptcha(captchaResponse);
+        if (!captchaResponseDto.isSuccess()) {
+            return "registration";
+        }
+        this.userService.addUser(user);
         return "redirect:/login";
+    }
+
+
+    @RequestMapping(value = "/activate/{code}", method = RequestMethod.GET)
+    public String activate(@PathVariable String code) {
+        this.userService.activateUser(code);
+        return "login";
     }
 }

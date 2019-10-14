@@ -32,7 +32,7 @@ public class WebSecurityConfig {
 
     private static final String[] UNSECURED_RESOURCE_LIST = new String[]{"/resources/**"};
 
-    private static final String[] UNAUTHORIZED_RESOURCE_LIST = new String[]{"/login*", "/registration*"};
+    private static final String[] UNAUTHORIZED_RESOURCE_LIST = new String[]{"/login*", "/registration*", "/activate/*"};
 
     @Configuration
     @Profile({"dev"})
@@ -235,7 +235,7 @@ public class WebSecurityConfig {
 
     @Bean
     public PasswordEncoder encoder() {
-        return new BCryptPasswordEncoder(11);
+        return new BCryptPasswordEncoder(12);
     }
 
 

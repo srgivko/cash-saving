@@ -8,6 +8,8 @@ public interface UserService {
 
     User saveUser(User user);
 
+    User addUser(User user);
+
     void removeUser(User user);
 
     Optional<User> getUserById(Long id);
@@ -17,4 +19,6 @@ public interface UserService {
     Optional<User> findByEmail(String email);
 
     Optional<User> findByUsername(String username);
+
+    void activateUser(String code);
 }

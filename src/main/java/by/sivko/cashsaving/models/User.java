@@ -64,7 +64,9 @@ public class User extends BaseEntity implements UserDetails {
     private boolean credentialsExpired = false;
 
     @Column
-    private boolean enabled = true;
+    private boolean enabled;
+
+    private String activationCode;
 
     @OneToOne(fetch = FetchType.LAZY, mappedBy = "user", cascade = CascadeType.ALL)
     private UserProfile userProfile;

@@ -8,10 +8,11 @@ import org.springframework.context.annotation.Import;
         PersistenceConfig.class,
         ServiceConfig.class,
         WebSecurityConfig.class,
-        //LiquibaseConfig.class,
+        LiquibaseConfig.class,
         AnnotationConfig.class,
         RepositoryConfig.class,
         DaoConfig.class,
+        MailConfig.class
 })
 public class SpringConfiguration {
 }
