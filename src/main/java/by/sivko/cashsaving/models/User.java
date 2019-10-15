@@ -5,12 +5,9 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.core.userdetails.UserDetails;
 
 import javax.persistence.*;
-import javax.validation.constraints.Email;
-import javax.validation.constraints.NotEmpty;
-import javax.validation.constraints.Size;
+import javax.validation.constraints.*;
 import java.util.HashSet;
 import java.util.Set;
-
 
 @Data
 @ToString(exclude = "categories")
@@ -29,29 +26,21 @@ public class User extends BaseEntity implements UserDetails {
     private static final long serialVersionUID = -5517738947999508011L;
 
     @Column(unique = true)
-    @NotEmpty
+    @NotEmpty(message = "Username cannot be empty")
+    @Size(max = 50, min = 6, message = "Username 6-50 characters")
     private String username;
 
     @Transient
     private String verifyPassword;
 
-    //    ^                 # start-of-string
-//    (?=.*[0-9])       # a digit must occur at least once
-//    (?=.*[a-z])       # a lower case letter must occur at least once
-//    (?=.*[A-Z])       # an upper case letter must occur at least once
-//    (?=.*[@#$%^&+=])  # a special character must occur at least once
-//    (?=\S+$)          # no whitespace allowed in the entire string
-//    .{8,}             # anything, at least eight places though
-//    $                 # end-of-string
-//    @Pattern(regexp = "^(?=.*[0-9])(?=.*[a-z])(?=.*[A-Z])(?=.*[@#$%^&+=])(?=\\S+$).{8,}$")
     @Column
     @NotEmpty
     @Size(min = 5)
     private String password;
 
     @Column(unique = true)
-    @NotEmpty
-    @Email
+    @NotEmpty(message = "Email cannot be empty")
+    @Email(message = "Email is incorrect")
     private String email;
 
     @Column(name = "account_expired")

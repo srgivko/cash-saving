@@ -22,30 +22,33 @@ public class Event extends BaseEntity {
 
     @Enumerated(EnumType.STRING)
     @Column
-    @NotNull
+    @NotNull(message = "Type cannot be empty")
     private Type type;
 
     @Column
-    @NotEmpty
+    @NotEmpty(message = "Name cannot be empty")
     private String name;
 
     @Column
-    @NotEmpty
+    @NotEmpty(message = "Description cannot be empty")
     private String description;
 
     @Column
-    @NotNull
+    @NotNull(message = "Amount cannot be empty")
     private BigDecimal amount;
 
     @Column
-    @NotNull
+    @NotNull(message = "Create date cannot be empty")
     @Temporal(TemporalType.TIMESTAMP)
     @DateTimeFormat(pattern = "yyyy-MM-dd'T'HH:mm")
     private Date createAt = new Date();
 
     @ManyToOne
-    @NotNull
+    @NotNull(message = "Category data cannot be empty")
     private Category category;
+
+    @Column
+    private String imgFilename;
 
     public enum Type {
         INCOME, OUTCOME

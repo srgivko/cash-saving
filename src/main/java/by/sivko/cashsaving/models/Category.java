@@ -28,22 +28,25 @@ public class Category extends BaseEntity {
     private static final long serialVersionUID = -1088780004560221054L;
 
     @Column
-    @NotEmpty
+    @NotEmpty(message = "Name cannot be empty")
     private String name;
 
     @Column
-    @NotEmpty
+    @NotEmpty(message = "Description cannot be empty")
     private String description;
 
     @Column
-    @NotNull
+    @NotNull(message = "Capacity cannot be empty")
     private BigDecimal capacity;
 
     @Column
-    @NotNull
+    @NotNull(message = "Create date cannot be empty")
     @Temporal(TemporalType.TIMESTAMP)
     @DateTimeFormat(pattern = "yyyy-MM-dd'T'HH:mm")
     private Date createAt = new Date();
+
+    @Column
+    private String imgFilename;
 
     @ManyToOne
     private User user;
