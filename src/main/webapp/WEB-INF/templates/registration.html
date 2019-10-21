@@ -9,37 +9,43 @@
     <form th:object="${user}" class="needs-validation" action="" novalidate method="post" th:action="@{/registration}">
         <div th:replace="../fragments/hiddenErrors">REPLACE BEFORE COMMITTING</div>
         <div class="form-group">
-            <div class="control-group" th:classappend="${#fields.hasErrors('username')} ? 'error'">
+            <div class="control-group">
                 <label for="username">Username</label>
-                <input type="text" class="form-control" th:field="*{username}" placeholder="Enter username"/>
-                <label class="control-label" th:errors="*{username}">[error]</label>
+                <input type="text" class="form-control" th:field="*{username}" placeholder="Enter username"
+                       th:classappend="${#fields.hasErrors('username')} ? 'is-invalid'"/>
+                <label class="invalid-feedback" th:errors="*{username}">[error]</label>
             </div>
         </div>
         <div class="form-group">
-            <div class="control-group" th:classappend="${#fields.hasErrors('email')} ? 'error'">
+            <div class="control-group" th:classappend="${#fields.hasErrors('email')} ? 'is-invalid'">
                 <label for="email">Email</label>
-                <input type="email" class="form-control" th:field="*{email}" placeholder="Email password"/>
-                <label class="control-label" th:errors="*{email}">[error]</label>
+                <input type="email" class="form-control" th:field="*{email}" placeholder="Email password"
+                       th:classappend="${#fields.hasErrors('email')} ? 'is-invalid'"/>
+                <label class="invalid-feedback" th:errors="*{email}">[error]</label>
             </div>
         </div>
         <div class="form-group">
-            <div class="control-group" th:classappend="${#fields.hasErrors('password')} ? 'error'">
+            <div class="control-group">
                 <label for="password">Password</label>
-                <input type="password" class="form-control" th:field="*{password}" placeholder="Enter password"/>
-                <label class="control-label" th:errors="*{password}">[error]</label>
+                <input type="password" class="form-control" th:field="*{password}" placeholder="Enter password"
+                       th:classappend="${#fields.hasErrors('password')} ? 'is-invalid'"/>
+                <label class="invalid-feedback" th:errors="*{password}">[error]</label>
             </div>
         </div>
         <div class="form-group">
-            <div class="control-group" th:classappend="${#fields.hasErrors('verifyPassword')} ? 'error'">
+            <div class="control-group">
                 <label for="verifyPassword">Verify password</label>
                 <input type="password" class="form-control" th:field="*{verifyPassword}" placeholder="Confirm password"
-                       oninput='verifyPassword.setCustomValidity(password.value !== verifyPassword.value ? "Passwords do not match." : "")'/>
-                <label class="control-label" th:errors="*{verifyPassword}">[error]</label>
+                       oninput='verifyPassword.setCustomValidity(password.value !== verifyPassword.value ? "Passwords do not match." : "")'
+                       th:classappend="${#fields.hasErrors('verifyPassword')} ? 'is-invalid'"/>
+                <label class="invalid-feedback" th:errors="*{verifyPassword}">[error]</label>
             </div>
         </div>
         <div class="form-group">
             <div class="control-group">
                 <div class="g-recaptcha" data-sitekey="6LfwWrwUAAAAAKm-Xh3tJk6NVgs_6JVx05LtlN98"></div>
+                <input hidden class="form-control" th:classappend="${captchaError!=null} ? 'is-invalid'"/>
+                <label class="invalid-feedback" th:if="${captchaError!=null}" th:text="${captchaError}">[error]</label>
             </div>
         </div>
         <div class="form-group">
