@@ -15,6 +15,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 import javax.validation.Valid;
 import java.io.IOException;
+import java.util.Map;
 
 @Controller
 @SessionAttributes("event")
@@ -50,9 +51,18 @@ public class EventController {
 
     @RequestMapping(value = {"/category/*/event/add", "/category/*/event/*/edit"}, method = RequestMethod.POST)
     public String addEvent(
-            @Valid Event event,
             @RequestParam(value = "file", required = false) MultipartFile file,
-            HttpSession httpSession) throws IOException {
+            @Valid Event event,
+            BindingResult bindingResult,
+            HttpSession httpSession,
+            Model model
+    ) throws IOException {
+        if (bindingResult.hasErrors()) {
+            Map<String, String> errors = ControllerUtils.getErrors(bindingResult);
+            model.addAllAttributes(errors);
+            model.addAttribute("eventTypes", Event.Type.values());
+            return "eventForm";
+        }
         event.setImgFilename(this.savingFileService.saveFile(file));
         this.eventService.addEvent(event);
         return String.format("redirect:%s", httpSession.getAttribute("backUrl"));

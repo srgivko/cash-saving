@@ -11,48 +11,63 @@
         <h1>Event</h1>
         <!--/*@thymesVar id="event" type="by.sivko.cashsaving.models.Event"*/-->
         <form class="needs-validation" action="" novalidate method="POST" th:object="${event}"
-              th:action="${#httpServletRequest.requestURI}">
-        <div th:replace="../fragments/hiddenErrors">REPLACE BEFORE COMMITTING</div>
-        <div class="form-group">
-            <div class="control-group" th:classappend="${#fields.hasErrors('name')} ? 'error'">
-                <label for="name">Event name</label>
-                <input type="text" class="form-control" th:field="*{name}" placeholder="Event name"/>
-                <label class="control-label" th:errors="*{name}">[error]</label>
+              th:action="${#httpServletRequest.requestURI}" enctype="multipart/form-data">
+            <div class="form-group">
+                <div class="control-group">
+                    <label for="name">Event name</label>
+                    <input type="text" class="form-control" th:field="*{name}" placeholder="Event name"
+                           th:classappend="${nameError!=null} ? 'is-invalid'" required/>
+                    <label class="invalid-feedback" th:if="${nameError!=null}"
+                           th:text="${nameError}">[error]</label>
+                </div>
             </div>
-        </div>
-        <div class="form-group">
-            <div class="control-group" th:classappend="${#fields.hasErrors('description')} ? 'error'">
-                <label for="description">Description</label>
-                <textarea type="text" class="form-control" th:field="*{description}" placeholder="Description"
-                          rows="3"></textarea>
-                <label class="control-label" th:errors="*{description}">[error]</label>
+            <div class="form-group">
+                <div class="control-group">
+                    <label for="description">Description</label>
+                    <textarea type="text" class="form-control" th:field="*{description}" placeholder="Description"
+                              rows="3" th:classappend="${descriptionError!=null} ? 'is-invalid'" required></textarea>
+                    <label class="invalid-feedback" th:if="${descriptionError!=null}"
+                           th:text="${descriptionError}">[error]</label>
+                </div>
             </div>
-        </div>
-        <div class="form-group">
-            <div class="control-group" th:classappend="${#fields.hasErrors('amount')} ? 'error'">
-                <label for="amount">Amount</label>
-                <input type="number" class="form-control" th:field="*{amount}" placeholder="Amount">
-                <label class="control-label" th:errors="*{amount}">[error]</label>
+            <div class="form-group">
+                <div class="control-group">
+                    <label for="amount">Amount</label>
+                    <input type="number" class="form-control" th:field="*{amount}" placeholder="Amount"
+                           th:classappend="${amountError!=null} ? 'is-invalid'" required/>
+                    <label class="invalid-feedback" th:if="${amountError!=null}"
+                           th:text="${amountError}">[error]</label>
+                </div>
             </div>
-        </div>
-        <div class="form-group">
-            <div class="control-group" th:classappend="${#fields.hasErrors('createAt')} ? 'error'">
-                <label for="createAt">crateAt</label>
-                <input type="datetime-local" class="form-control" th:field="*{createAt}">
-                <label class="control-label" th:errors="*{createAt}">[error]</label>
+            <div class="form-group">
+                <div class="control-group">
+                    <label for="createAt">crateAt</label>
+                    <input type="datetime-local" class="form-control" th:field="*{createAt}"
+                           th:classappend="${createAtError!=null} ? 'is-invalid'" required/>
+                    <label class="invalid-feedback" th:if="${capacityError!=null}"
+                           th:text="${createAtError}">[error]</label>
+                </div>
             </div>
-        </div>
-        <div class="form-group">
-            <label for="type">Type</label>
-            <select class="form-control" th:field="*{type}">
-                <!--/*@thymesVar id="type" type="by.sivko.cashsaving.models.Event.Type"*/-->
-                <!--/*@thymesVar id="eventTypes" type="java.util.Enumeration<by.sivko.cashsaving.models.Event.Type>"*/-->
-                <option th:each="type : ${eventTypes}" th:value="${type}" th:text="${type.name()}">
-            </select>
-        </div>
-        <div class="form-group">
-            <button type="submit" class="btn-block btn-primary">Add event</button>
-        </div>
+            <div class="form-group">
+                <label for="type">Type</label>
+                <select class="form-control" th:field="*{type}"
+                        th:classappend="${typeError!=null} ? 'is-invalid'">
+                    <!--/*@thymesVar id="type" type="by.sivko.cashsaving.models.Event.Type"*/-->
+                    <!--/*@thymesVar id="eventTypes" type="java.util.Enumeration<by.sivko.cashsaving.models.Event.Type>"*/-->
+                    <option th:each="type : ${eventTypes}" th:value="${type}" th:text="${type.name()}">
+                </select>
+                <label class="invalid-feedback" th:if="${typeError!=null}"
+                       th:text="${typeError}">[error]</label>
+            </div>
+            <div class="form-group">
+                <div class="custom-file">
+                    <input class="form-control" type="file" name="file" id="file"/>
+                    <label class="custom-file-label" for="file">Choose file...</label>
+                </div>
+            </div>
+            <div class="form-group">
+                <button type="submit" class="btn-block btn-primary">Add event</button>
+            </div>
         </form>
     </div>
 </main>

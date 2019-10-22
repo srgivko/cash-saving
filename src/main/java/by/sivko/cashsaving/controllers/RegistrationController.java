@@ -1,5 +1,6 @@
 package by.sivko.cashsaving.controllers;
 
+import by.sivko.cashsaving.exceptions.NotFoundEntityException;
 import by.sivko.cashsaving.models.User;
 import by.sivko.cashsaving.models.dto.CaptchaResponseDto;
 import by.sivko.cashsaving.services.CaptchaService;
@@ -13,6 +14,7 @@ import org.springframework.validation.ObjectError;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
+import java.util.Map;
 
 @Controller
 @SessionAttributes("user")
@@ -37,33 +39,55 @@ public class RegistrationController {
     @RequestMapping(value = "/registration", method = RequestMethod.POST)
     public String registerUser(
             @RequestParam(value = "g-recaptcha-response", defaultValue = "default") String captchaResponse,
-            @RequestParam("verifyPassword") String passwordConfirmation,
             @Valid User user,
             BindingResult bindingResult,
             Model model
     ) {
         CaptchaResponseDto captchaResponseDto = this.captchaService.checkCaptcha(captchaResponse);
         if (!captchaResponseDto.isSuccess()) {
-            model.addAttribute("captchaError", "Fill captcha");
-        } else {
-            model.addAttribute("captchaError", null);
+            bindingResult.addError(new FieldError("user", "captcha", "Fill captcha"));
         }
 
-        //user.getPassword() != null && !user.getPassword().equals(passwordConfirmation
-        if (true){
+        if (user.getVerifyPassword().isEmpty()) {
+            bindingResult.addError(new FieldError("user", "verifyPassword", "Confirmation password cannot be empty"));
+        }
+
+
+        if (user.getPassword() != null && !user.getPassword().equals(user.getVerifyPassword())) {
             bindingResult.addError(new FieldError("user", "verifyPassword", "Password are different!"));
         }
+
+        if (this.userService.findByUsername(user.getUsername()).isPresent()) {
+            bindingResult.addError(new FieldError("user", "username", "User exists with this username!"));
+        }
+
+        if (this.userService.findByEmail(user.getEmail()).isPresent()) {
+            bindingResult.addError(new FieldError("user", "email", "User exists with this email!"));
+        }
+
         if (bindingResult.hasErrors()) {
+            Map<String, String> errors = ControllerUtils.getErrors(bindingResult);
+            model.mergeAttributes(errors);
             return "registration";
         }
+
+
         this.userService.addUser(user);
-        return "redirect:/login";
+        return "redirect:/login?activationCode";
     }
 
 
     @RequestMapping(value = "/activate/{code}", method = RequestMethod.GET)
-    public String activate(@PathVariable String code) {
-        this.userService.activateUser(code);
+    public String activate(@PathVariable String code, Model model) {
+        try {
+            this.userService.activateUser(code);
+            model.addAttribute("statusMessageType", "success");
+            model.addAttribute("statusMessage", "User successfully activated");
+        } catch (NotFoundEntityException ex) {
+            model.addAttribute("statusMessageType", "error");
+            model.addAttribute("statusMessage", "Activation code is not found");
+        }
         return "login";
+
     }
 }

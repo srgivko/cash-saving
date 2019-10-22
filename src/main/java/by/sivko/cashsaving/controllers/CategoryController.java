@@ -14,6 +14,7 @@ import javax.validation.Valid;
 import java.io.File;
 import java.io.IOException;
 import java.security.Principal;
+import java.util.Map;
 import java.util.UUID;
 
 @Controller
@@ -44,12 +45,19 @@ public class CategoryController {
         return "categoryForm";
     }
 
-    @PostMapping({"/add", "/*/edit"})
+    @RequestMapping(value = {"/add", "/*/edit"}, method = RequestMethod.POST)
     public String addCategory(
             @RequestParam(value = "file") MultipartFile file,
             @Valid Category category,
-            Principal principal
+            BindingResult bindingResult,
+            Principal principal,
+            Model model
     ) throws IOException {
+        if (bindingResult.hasErrors()) {
+            Map<String, String> errors = ControllerUtils.getErrors(bindingResult);
+            model.addAllAttributes(errors);
+            return "categoryForm";
+        }
         category.setImgFilename(this.savingFileService.saveFile(file));
         this.categoryService.addCategory(category, principal.getName());
         return "redirect:/";

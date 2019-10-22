@@ -24,7 +24,7 @@
             <td th:text="${event.amount}">Amount</td>
             <td th:text="${event.category.name}">Category Name</td>
             <td><a class="btn btn-primary" href="#" role="button"
-                   th:href="@{|/category/${event.category.id}/event/${event.id}/edit'|}">Edit</a></td>
+                   th:href="@{|/category/${event.category.id}/event/${event.id}/edit|}">Edit</a></td>
             <td><a class="btn btn-danger" href="#" role="button"
                    th:href="@{|/category/${event.category.id}/event/${event.id}/delete|}">Delete</a></td>
         </tr>
