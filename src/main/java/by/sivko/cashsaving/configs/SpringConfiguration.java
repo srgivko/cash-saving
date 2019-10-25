@@ -12,7 +12,8 @@ import org.springframework.context.annotation.Import;
         AnnotationConfig.class,
         RepositoryConfig.class,
         DaoConfig.class,
-        MailConfig.class
+        MailConfig.class,
+        WebConfig.class,
 })
 public class SpringConfiguration {
 }

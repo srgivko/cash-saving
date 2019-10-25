@@ -4,9 +4,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.MessageSource;
-import org.springframework.context.annotation.Bean;
-import org.springframework.context.annotation.ComponentScan;
-import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.*;
 import org.springframework.context.support.ReloadableResourceBundleMessageSource;
 import org.springframework.http.CacheControl;
 import org.springframework.web.multipart.MultipartResolver;
@@ -23,10 +21,11 @@ import org.thymeleaf.spring5.templateresolver.SpringResourceTemplateResolver;
 import org.thymeleaf.spring5.view.ThymeleafViewResolver;
 import org.thymeleaf.templatemode.TemplateMode;
 
+import javax.annotation.Resources;
 import java.util.concurrent.TimeUnit;
 
-@Configuration
 @EnableWebMvc
+@Configuration
 @ComponentScan({"by.sivko.cashsaving.controllers", "by.sivko.cashsaving.utils"})
 public class WebConfig implements WebMvcConfigurer {
 

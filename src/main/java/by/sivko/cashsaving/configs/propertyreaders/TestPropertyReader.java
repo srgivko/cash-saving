@@ -1,4 +1,4 @@
-package by.sivko.cashsaving.configs.PropertyReaders;
+package by.sivko.cashsaving.configs.propertyreaders;
 
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.config.PropertyPlaceholderConfigurer;

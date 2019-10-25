@@ -30,7 +30,7 @@ public class MailConfig {
     private String debug;
 
     @Bean(name = "myMailSender")
-    public JavaMailSender getMailSender() {
+    public JavaMailSender getMailSender() { ;
         JavaMailSenderImpl javaMailSender = new JavaMailSenderImpl();
         javaMailSender.setHost(host);
         javaMailSender.setPort(port);

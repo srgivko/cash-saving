@@ -1,14 +1,8 @@
 <div class="chart container-fluid" xmlns:th="http://www.thymeleaf.org">
-    <div class="row">
-        <col-md-4>
-            <button class="chart-button">DAY</button>
-        </col-md-4>
-        <col-md-4>
-            <button class="chart-button">MONTH</button>
-        </col-md-4>
-        <col-md-4>
-            <button class="chart-button">YEAR</button>
-        </col-md-4>
+    <div class="d-flex justify-content-around" style="margin-bottom: 10px">
+        <button class="btn btn-light chart-button" style="width: 30%;">DAY</button>
+        <button class="btn btn-light chart-button" style="width: 30%;">MONTH</button>
+        <button class="btn btn-light chart-button" style="width: 30%;">YEAR</button>
     </div>
     <div class="row">
         <div class="col-md-6">
@@ -20,6 +14,7 @@
         <script th:inline="javascript">
             $(function () {
                     'use strict';
+
                     charIt('DAY');
 
                     async function charIt(period) {

@@ -1,0 +1,28 @@
+<div class="card" xmlns:th="http://www.thymeleaf.org">
+    <!--/*@thymesVar id="category" type="by.sivko.cashsaving.models.Category"*/-->
+    <div class="card-img" th:style="'background-image:url(\'' + @{|/img/${category.imgFilename}|} + '\');'">
+        <div class="card-detail" th:style="${category.imgFilename==null ? 'opacity:1' : ''}">
+            <h6>Description</h6>
+            <!--${#strings.substring(category.description,0,6)+'...'}-->
+            <p th:text="${category.description}">[DESCRIPTION]</p>
+        <h6>CreateAt</h6>
+        <p th:text="${#dates.format(category.createAt,'dd-MM-yyyy')}">[CreateAt]</p>
+        <h6>Capacity</h6>
+        <p th:text="${category.capacity}">[Capacity]</p>
+    </div>
+</div>
+<div class="card-body">
+    <div class="card-labels">
+        <span class="label income" th:text="${category.categoryStat.income}">[Total INCOME]</span>
+        <span class="label outcome" th:text="${category.categoryStat.income}">[Total INCOME]</span>
+        <span class="label total" th:text="${category.categoryStat.income}">[Total INCOME]</span>
+    </div>
+    <h5 class="card-title" th:text="${category.name}">[name]</h5>
+    <div class="card-buttons">
+        <a class="btn btn-primary" href="#" role="button" th:href="@{|/category/${category.id}/edit|}">Edit</a>
+        <a class="btn btn-danger" href="#" role="button" th:href="@{|/category/${category.id}/delete|}">Delete</a>
+        <a class="btn btn-warning" href="#" role="button" th:href="@{|/category/${category.id}/event/add|}">Add
+            event</a>
+    </div>
+</div>
+</div>

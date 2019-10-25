@@ -1,0 +1,4 @@
+<div class="cards" xmlns:th="http://www.thymeleaf.org">
+    <div th:each="category : ${categories}" th:include="../fragments/categoryCard" th:remove="tag">
+    </div>
+</div>

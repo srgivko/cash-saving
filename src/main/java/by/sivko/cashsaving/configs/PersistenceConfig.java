@@ -17,7 +17,7 @@ import java.util.Properties;
 
 @Configuration
 @EnableTransactionManagement
-@ComponentScan("by.sivko.cashsaving.configs.PropertyReaders")
+@ComponentScan("by.sivko.cashsaving.configs.propertyreaders")
 public class PersistenceConfig {
 
     @Value("${hibernate.hbm2ddl.auto}")
