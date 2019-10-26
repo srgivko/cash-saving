@@ -32,7 +32,7 @@ public class WebSecurityConfig {
 
     private static final String[] UNSECURED_RESOURCE_LIST = new String[]{"/resources/**"};
 
-    private static final String[] UNAUTHORIZED_RESOURCE_LIST = new String[]{"/login*", "/registration*", "/activate/*"};
+    private static final String[] UNAUTHORIZED_RESOURCE_LIST = new String[]{"/login*", "/registration*", "/activate/*", "/login/forget*", "/login/forget/*"};
 
     @Configuration
     @Profile({"dev"})

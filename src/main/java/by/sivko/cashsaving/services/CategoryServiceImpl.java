@@ -49,7 +49,6 @@ public class CategoryServiceImpl implements CategoryService {
         this.categoryRepository.delete(category);
     }
 
-
     @Transactional(readOnly = true)
     @Override
     public Collection<Category> getAllCategoriesByUserUsername(String username) {

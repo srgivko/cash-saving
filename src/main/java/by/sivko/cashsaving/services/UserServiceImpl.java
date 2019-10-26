@@ -6,6 +6,7 @@ import by.sivko.cashsaving.models.User;
 import by.sivko.cashsaving.repositories.AuthorityRepository;
 import by.sivko.cashsaving.repositories.UserRepository;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.amqp.core.AmqpTemplate;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -19,8 +20,11 @@ import java.util.UUID;
 @Slf4j
 public class UserServiceImpl implements UserService {
 
-    @Value("${hostname}")
-    private String hostname;
+    @Value("${mq.register.routing.key}")
+    private String registerRoutingKey;
+
+    @Value("${mq.restore.routing.key}")
+    private String restoreRoutingKey;
 
     private final UserRepository userRepository;
 
@@ -28,14 +32,14 @@ public class UserServiceImpl implements UserService {
 
     private final PasswordEncoder passwordEncoder;
 
-    private final MailSenderService mailSenderService;
+    private final AmqpTemplate amqpTemplate;
 
     @Autowired
-    public UserServiceImpl(UserRepository userRepository, AuthorityRepository authorityRepository, PasswordEncoder passwordEncoder, MailSenderService mailSender) {
+    public UserServiceImpl(UserRepository userRepository, AuthorityRepository authorityRepository, PasswordEncoder passwordEncoder, AmqpTemplate amqpTemplate) {
         this.userRepository = userRepository;
         this.authorityRepository = authorityRepository;
         this.passwordEncoder = passwordEncoder;
-        this.mailSenderService = mailSender;
+        this.amqpTemplate = amqpTemplate;
     }
 
     @Transactional
@@ -51,17 +55,13 @@ public class UserServiceImpl implements UserService {
         user.setPassword(passwordEncoder.encode(user.getPassword()));
         user.setActivationCode(UUID.randomUUID().toString());
         user.addAuthority(this.authorityRepository.findByType(AuthorityType.ROLE_USER));
+        log.info("Save user [%s] in db");
         this.userRepository.save(user);
-        this.sendMessage(user);
+        log.info("Success saving user [%s] in db");
+        log.info("Send user [%s] in mq", user);
+        this.amqpTemplate.convertAndSend(registerRoutingKey, user);
+        log.info("Success sending user [%s] in mq", user);
         return user;
-    }
-
-    private void sendMessage(User user) {
-        if (!user.getEmail().isEmpty()) {
-            String message = String.format("Hello, %s!" +
-                    "Welcome to Sweater Please visit next link: http://%s/activate/%s", user.getUsername(), hostname, user.getActivationCode());
-            this.mailSenderService.send(user.getEmail(), "Activation code", message);
-        }
     }
 
     @Transactional
@@ -103,5 +103,29 @@ public class UserServiceImpl implements UserService {
         user.setActivationCode(null);
         this.userRepository.save(user);
         log.info(String.format("Success activation user [%s]", user));
+    }
+
+    @Transactional
+    @Override
+    public void setActivateCodeAndSendEmailForRestorePassword(String email) {
+        log.info("Restore password at user with email [%s]", email);
+        User user = this.userRepository.findByEmail(email).orElseThrow(NotFoundEntityException::new);
+        user.setActivationCode(UUID.randomUUID().toString());
+        this.amqpTemplate.convertAndSend(restoreRoutingKey, user);
+        log.info("Success send activation code for restore password to user [%s]", user);
+    }
+
+    @Transactional(readOnly = true)
+    @Override
+    public boolean isExistUserByActivateCode(String code) {
+        return this.userRepository.findByActivationCode(code).isPresent();
+    }
+
+    @Transactional
+    @Override
+    public void changePassword(String userCode, String password) {
+        User user = this.userRepository.findByActivationCode(userCode).orElseThrow(NotFoundEntityException::new);
+        user.setPassword(this.passwordEncoder.encode(password));
+        user.setActivationCode(null);
     }
 }

@@ -21,4 +21,10 @@ public interface UserService {
     Optional<User> findByUsername(String username);
 
     void activateUser(String code);
+
+    void setActivateCodeAndSendEmailForRestorePassword(String email);
+
+    boolean isExistUserByActivateCode(String code);
+
+    void changePassword(String code, String password);
 }

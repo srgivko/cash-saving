@@ -25,6 +25,12 @@
     </properties>
 
     <dependencies>
+        <!-- https://mvnrepository.com/artifact/org.springframework.amqp/spring-rabbit -->
+        <dependency>
+            <groupId>org.springframework.amqp</groupId>
+            <artifactId>spring-rabbit</artifactId>
+            <version>2.1.10.RELEASE</version>
+        </dependency>
         <!--Spring dependency-->
         <dependency>
             <groupId>org.springframework</groupId>

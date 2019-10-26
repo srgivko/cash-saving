@@ -14,6 +14,7 @@ import org.springframework.context.annotation.Import;
         DaoConfig.class,
         MailConfig.class,
         WebConfig.class,
+        RabbitMQConfig.class,
 })
 public class SpringConfiguration {
 }
