@@ -31,7 +31,7 @@
     <appender-ref ref="COLOR"/>
     </logger>
 
-    <root level="debug">
+    <root level="info">
         <appender-ref ref="COLOR"/>
         <!-- to use enable this mode pass -Dcolor to jvm -->
         <!--<if condition='isDefined("color")'>-->

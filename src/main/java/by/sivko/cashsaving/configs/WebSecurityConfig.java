@@ -19,9 +19,12 @@ import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.security.web.authentication.rememberme.JdbcTokenRepositoryImpl;
+import org.springframework.security.web.authentication.rememberme.PersistentTokenRepository;
 import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
 import org.springframework.transaction.annotation.Transactional;
 
+import javax.sql.DataSource;
 import java.util.Collections;
 import java.util.Optional;
 
@@ -100,9 +103,12 @@ public class WebSecurityConfig {
 
         private final DaoAuthenticationProvider daoAuthenticationProvider;
 
+        private final PersistentTokenRepository persistentTokenRepository;
+
         @Autowired
-        public LiveWebSecurityConfigurerAdapter(DaoAuthenticationProvider daoAuthenticationProvider) {
+        public LiveWebSecurityConfigurerAdapter(DaoAuthenticationProvider daoAuthenticationProvider, PersistentTokenRepository persistentTokenRepository) {
             this.daoAuthenticationProvider = daoAuthenticationProvider;
+            this.persistentTokenRepository = persistentTokenRepository;
         }
 
         @Override
@@ -138,6 +144,10 @@ public class WebSecurityConfig {
                         .loginPage("/login")
                     //.successHandler((request, response, authentication) -> response.sendRedirect(authentication.getName()))
                         .permitAll()
+                    .and()
+                        .rememberMe()
+                            .rememberMeParameter("remember-me")
+                            .tokenRepository(persistentTokenRepository)
 //                    .and()
 //                            .headers()
 //                            .cacheControl()
@@ -163,9 +173,7 @@ public class WebSecurityConfig {
     @Profile({"dev", "test"})
     public static class DevAndTestWebSecurityConfigurerAdapter extends WebSecurityConfigurerAdapter {
 
-
         private final DaoAuthenticationProvider daoAuthenticationProvider;
-
 
         @Autowired
         public DevAndTestWebSecurityConfigurerAdapter(DaoAuthenticationProvider daoAuthenticationProvider) {
@@ -238,5 +246,11 @@ public class WebSecurityConfig {
         return new BCryptPasswordEncoder(12);
     }
 
+    @Bean
+    public PersistentTokenRepository tokenRepository(DataSource dataSource){
+        JdbcTokenRepositoryImpl tokenRepository = new JdbcTokenRepositoryImpl();
+        tokenRepository.setDataSource(dataSource);
+        return tokenRepository;
+    }
 
 }

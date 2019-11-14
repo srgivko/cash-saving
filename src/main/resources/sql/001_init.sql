@@ -9,7 +9,6 @@ drop table if exists user_profile cascade;
 drop table if exists users cascade;
 
 create sequence hibernate_sequence;
-alter sequence hibernate_sequence owner to pilsik;
 
 create table authorities
 (
@@ -18,8 +17,6 @@ create table authorities
 			primary key,
 	type varchar(255) not null
 );
-
-alter table authorities owner to pilsik;
 
 create table user_profile
 (
@@ -33,8 +30,6 @@ create table user_profile
 	state varchar(255),
 	zip varchar(10)
 );
-
-alter table user_profile owner to pilsik;
 
 create table users
 (
@@ -55,8 +50,6 @@ create table users
 			unique
 );
 
-alter table users owner to pilsik;
-
 create table categories
 (
 	id bigint not null
@@ -70,8 +63,6 @@ create table categories
 		constraint categories_users_fk
 			references users
 );
-
-alter table categories owner to pilsik;
 
 create table events
 (
@@ -88,8 +79,6 @@ create table events
 			references categories
 );
 
-alter table events owner to pilsik;
-
 create table user_authority
 (
 	user_id bigint not null
@@ -101,7 +90,5 @@ create table user_authority
 	constraint user_authority_pkey
 		primary key (user_id, authority_id)
 );
-
-alter table user_authority owner to pilsik;
 
 end transaction;

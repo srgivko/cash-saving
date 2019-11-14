@@ -18,4 +18,16 @@
         <sqlFile path="../sql/003_add_admin.sql" relativeToChangelogFile="true" stripComments="true"/>
     </changeSet>
 
+    <changeSet id="4" author="Sergey Ivko">
+        <sqlFile path="../sql/004_change_sequence_start.sql" relativeToChangelogFile="true" stripComments="true"/>
+    </changeSet>
+
+    <changeSet id="5" author="Sergey Ivko">
+        <sqlFile path="../sql/005_add_remember_me.sql" relativeToChangelogFile="true" stripComments="true"/>
+    </changeSet>
+
+    <changeSet id="6" author="Sergey Ivko">
+        <sqlFile path="../sql/006_add_imgfilename_to_categories_and_events.sql" relativeToChangelogFile="true" stripComments="true"/>
+    </changeSet>
+
 </databaseChangeLog>
